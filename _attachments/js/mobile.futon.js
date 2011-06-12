@@ -29,6 +29,12 @@ var Tasks = (function () {
       lastPane = null,
       $db     = $.couch.db(mainDb);
 
+  var params = {};
+  $.each(document.location.search.slice(1).split("&"), function(i, param) {
+    var tmp = param.split("=");
+    params[tmp[0]] = tmp[1];
+  });
+
   var templates = {
     home_tpl : {
       transition : "slideHorizontal",
@@ -40,52 +46,52 @@ var Tasks = (function () {
   };
 
   router.get(/^(!)?$/, function () {
-    $("#title").text("CouchDB");          
-    render(/^(!)?$/, "home_tpl", null);
+    $("#title").text("CouchDB");
+    render(/^(!)?$/, "home_tpl", {ip:params.ip || "127.0.0.1", port:document.location.port});
   });
 
   router.get("!/couchapps/", function () {
-    
-    // 
+
+    //
     var completed = 0;
     var couchapps = [];
-    
+
     function designDocs(database) {
       return $.couch.db(database).allDesignDocs();
     }
-    
-    function isCouchApp(ddoc, max) { 
+
+    function isCouchApp(ddoc, max) {
         var url = "/" + ddoc.database + "/" + ddoc.ddoc + "/index.html";
         $.ajax({
-            type:"HEAD", 
-            url:url, 
+            type:"HEAD",
+            url:url,
             complete: function(xhr) {
                 completed++;
-                if (xhr.status === 200) { 
+                if (xhr.status === 200) {
                     couchapps.push({url:url, name:ddoc.ddoc.split("/")[1]});
                 }
-                if (completed === max) { 
-                    $("#title").text("Couchapps");        
+                if (completed === max) {
+                    $("#title").text("Couchapps");
                     render("!/couchapps/", "couchapps_tpl", {couchapps:couchapps});
                 }
             }
         });
     }
-    
+
     $.couch.allDbs({
       success: function(data) {
         $.when.apply(this, $.map(data, designDocs)).then(function() {
             var designDocs = [];
-            $.each(arguments, function(id, ddocs) { 
-                $.each(ddocs[0].rows, function(ddocid, ddoc) { 
+            $.each(arguments, function(id, ddocs) {
+                $.each(ddocs[0].rows, function(ddocid, ddoc) {
                     designDocs.push({database:data[id], ddoc:ddoc.id});
                 });
             });
-            
-            $.map(designDocs, function(ddoc) { 
+
+            $.map(designDocs, function(ddoc) {
                 isCouchApp(ddoc, designDocs.length);
             });
-            
+
         });
       }
     });
@@ -117,7 +123,7 @@ var Tasks = (function () {
 
     data = data || {};
     $("body").removeClass(current_tpl).addClass(tpl);
-    
+
     var rendered = Mustache.to_html($("#" + tpl).html(), data),
     $pane = $("<div class='pane'><div class='content'>" + rendered + "</div></div>");
 
