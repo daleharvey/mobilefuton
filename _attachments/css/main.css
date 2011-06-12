@@ -37,9 +37,6 @@ a {
 }
 
 /* FORMS */
-form {
-    padding:10px;
-}
 
 input[type=text],input[type=password], textarea {
     font:1em Helvetica, arial, sans-serif;
@@ -289,6 +286,16 @@ li select {
     margin:10px;
 }
 
+li input[type=text] {
+    -moz-box-sizing: border-box;
+    border: 1px solid #CCCCCC;
+    display: block;
+    font: bold 1em Helvetica,Arial,sans-serif;
+    margin: 10px;
+    padding: 4px;
+    width:auto;
+}
+
 li label {
     display:block;
     margin:10px;
@@ -314,3 +321,10 @@ option {
     border:1px solid #999;
     overflow:auto;
 }
+
+.none {
+    text-align:center;
+    padding:5px;
+}
+
+#stored { margin-bottom:30px; }

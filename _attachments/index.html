@@ -57,37 +57,49 @@
     </script>
 
     <script type="text/html" id="replication_tpl">
-      <ul>
-        <li class="header">From</li>
-        <li>
-            <select>
+      <ul id="stored">
+        <li class="header">Previous Replications</li>
+        {{#replications}}
+        <li data-source="{{source}}" data-target="{{target}}" data-continous="{{continous}}">
+          <a class="replication">{{source}} => {{target}}</a>
+        </li>
+        {{/replications}}
+        {{^replications}}<li class="none">No Stored Replications</li>{{/replications}}
+      </ul>
+
+      <form action="#!/replication/">
+        <ul>
+          <li class="header">From</li>
+          <li>
+            <select name="source" id="source_select">
               {{#databases}}
-                <option value="{{.}}">{{.}}</option>
+              <option value="{{.}}">{{.}}</option>
               {{/databases}}
               <option value="manual">Remote Database</option>
             </select>
-        </li>
-      </ul>
-      <ul>
-        <li class="header">To</li>
-        <li>
-            <select>
+          </li>
+        </ul>
+        <ul>
+          <li class="header">To</li>
+          <li>
+            <select name="target" id="target_select">
               {{#databases}}
-                <option value="{{.}}">{{.}}</option>
+              <option value="{{.}}">{{.}}</option>
               {{/databases}}
               <option value="manual">Remote Database</option>
             </select>
-        </li>
-      </ul>
-      <ul>
-        <li class="header">Options</li>
-        <li><label for="continous">
-          <input type="checkbox" id="continous" name="continous" /> Continous</label>
-        </li>
-      </ul>
-      <div style="padding:10px;">
-      <input type="submit" value="replicate" />
-      </div>
+          </li>
+        </ul>
+        <ul>
+          <li class="header">Options</li>
+          <li><label for="continous">
+              <input type="checkbox" id="continous" name="continous" /> Continous</label>
+          </li>
+        </ul>
+        <div style="padding:10px;">
+          <input type="submit" value="replicate" />
+        </div>
+      </form>
     </script>
 
   </body>

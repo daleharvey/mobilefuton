@@ -24,6 +24,7 @@ var Tasks = (function () {
       docs    = {},
       tasks   = [],
       servers = [],
+      replications = localStorage.replications && JSON.parse(localStorage.replications) || [],
       zIndex  = 0,
       currentOffset = 0,
       lastPane = null,
@@ -47,7 +48,10 @@ var Tasks = (function () {
 
   router.get(/^(!)?$/, function () {
     $("#title").text("CouchDB");
-    render(/^(!)?$/, "home_tpl", {ip:params.ip || document.location.host, port:document.location.port || 80});
+    render(/^(!)?$/, "home_tpl", {
+      ip:params.ip || document.location.hostname,
+      port:document.location.port || 80
+    });
   });
 
   router.get("!/couchapps/", function () {
@@ -124,9 +128,34 @@ var Tasks = (function () {
   router.get("!/replication/", function () {
     $.couch.allDbs({}).then(function(data) {
       $("#title").text("Replication");
-      render("!/replication/", "replication_tpl", {databases:data});
+      render("!/replication/", "replication_tpl", {databases:data, replications:replications});
     });
   });
+
+  router.post("!/replication/", function (e, form) {
+    if (!replicationExists(form)) {
+      replications.push(form);
+      localStorage.replications = JSON.stringify(replications);
+    }
+    var reOpts = {create_target:true};
+    if (form.continous == "on") {
+      reOpts.continous = true;
+    }
+    $.couch.replicate(form.source, form.target, {}, reOpts).done(function() {
+      alert("Replication Successful");
+    }).fail(function() {
+      alert("Replication Failed");
+    });
+  });
+
+  function replicationExists(data) {
+    for(var i = replications.length; i < replications.length; i++) {
+      if (replications[i].source == data.source && replications[i].target === data.target) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   function render(url, tpl, data) {
 
@@ -225,6 +254,28 @@ var Tasks = (function () {
         .css("-webkit-transform", "translate(" + x + "px, 0)");
     }
   }
+
+  $("#stored").live('mousedown', function(e) {
+    if ($(e.target).is(".replication")) {
+      var $obj = $(e.target).parent("li");
+      $("[name=source]").replaceWith("<input type='text' name='source' value='"+$obj.attr("data-source")+"' />");
+      $("[name=target]").replaceWith("<input type='text' name='target' value='"+$obj.attr("data-target")+"' />");
+      if ($obj.attr("data-continous") === "on") {
+        $("#continous").attr("checked", "checked");
+      } else {
+        $("#continous").removeAttr("checked");
+      }
+    }
+  });
+
+  $("select").live('change', function(e) {
+    var $select = $(e.target);
+    if ($select.attr('id') == "source_select" || $select.attr('id') === "target_select") {
+      if ($select.val() === "manual") {
+        $select.replaceWith("<input type='text' name='"+$select.attr('name')+"' />");
+      }
+    }
+  });
 
   $(window).bind("resize", function () {
     paneWidth = $("body").width();
