@@ -28,7 +28,7 @@ h3 {
     text-shadow: 1px 1px 1px #FFF;
 }
 
-a { 
+a {
     color:inherit;
     text-decoration:none;
 }
@@ -193,7 +193,7 @@ footer {
     border-bottom:1px solid #000;
 }
 
-ul { 
+ul {
     margin:10px;
     -moz-box-shadow: 1px 1px 1px #FFF;
     background-clip: padding-box;
@@ -202,15 +202,15 @@ ul {
 }
 
 
-li:first-child { 
+li:first-child {
     border-radius:0.6em 0.6em 0px 0px;
 }
-li:last-child { 
+li:last-child {
     border-radius:0px 0px 0.6em 0.6em;
     border-width:1px;
 }
 
-li { 
+li {
     display: block;
     overflow:auto;
     background: -moz-linear-gradient(center top , #FEFEFE, #EEEEEE) repeat scroll 0 0 #EEEEEE;
@@ -228,12 +228,12 @@ li {
     cursor:pointer;
 }
 
-li:hover { 
+li:hover {
     background: -moz-linear-gradient(center top , #EDEDED, #DADADA) repeat scroll 0 0 #DADADA;
     background: -webkit-gradient(linear, 0% 40%, 0% 70%, from(#EDEDED), to(#DADADA));
 }
 
-li a { 
+li a {
     display:block;
     padding:10px;
 }
@@ -266,7 +266,7 @@ li a {
 footer a { position:absolute; }
 footer h1 { color:white; text-align:center; margin:10px; font-size:1.5em; }
 
-li.header { 
+li.header {
     padding: 0.5em 15px;
     background: -moz-linear-gradient(center top , #81A8CE, #5E87B0) repeat scroll 0 0 #5E87B0;
     background: -webkit-gradient(linear, 0% 40%, 0% 70%, from(#81A8CE), to(#5E87B0));
@@ -275,21 +275,30 @@ li.header {
     text-shadow: 0 -1px 1px #254F7A;
 }
 
-li select { 
+li select {
     display:block;
     border:1px solid #CCC;
     padding:4px;
-    -moz-box-sizing: border-box; 
+    -moz-box-sizing: border-box;
     font:1em Helvetica,Arial,sans-serif;
     font-weight:bold;
     margin:10px;
 }
 
-li label { 
+li label {
     display:block;
     margin:10px;
 }
 
-option { 
+option {
     padding-left:10px;
+}
+
+.home.plain_btn {
+    padding: 0 5px;
+}
+
+.home img {
+    height:24px;
+    height:24px;
 }
