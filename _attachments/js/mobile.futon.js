@@ -97,6 +97,15 @@ var Tasks = (function () {
     });
   });
 
+  router.get("!/databases/:database/", function (database) {
+    $.couch.db(database).allDocs({}).then(function(data) {
+      $("#title").text(database);
+      data.start = 1;
+      data.end = data.total_rows;
+      render("!/databases/"+database+"/", "database_tpl", data);
+    });
+  });
+
   router.get("!/databases/", function () {
     $.couch.allDbs({
       success: function(data) {
