@@ -306,3 +306,11 @@ option {
     height:24px;
     height:24px;
 }
+
+#document {
+    margin:10px;
+    padding:5px;
+    background:#EEE;
+    border:1px solid #999;
+    overflow:auto;
+}

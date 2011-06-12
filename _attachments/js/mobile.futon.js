@@ -47,7 +47,7 @@ var Tasks = (function () {
 
   router.get(/^(!)?$/, function () {
     $("#title").text("CouchDB");
-    render(/^(!)?$/, "home_tpl", {ip:params.ip || "127.0.0.1", port:document.location.port});
+    render(/^(!)?$/, "home_tpl", {ip:params.ip || document.location.host, port:document.location.port || 80});
   });
 
   router.get("!/couchapps/", function () {
@@ -100,9 +100,17 @@ var Tasks = (function () {
   router.get("!/databases/:database/", function (database) {
     $.couch.db(database).allDocs({}).then(function(data) {
       $("#title").text(database);
+      data.database = database;
       data.start = 1;
       data.end = data.total_rows;
       render("!/databases/"+database+"/", "database_tpl", data);
+    });
+  });
+
+  router.get("!/databases/:database/*doc", function (database, doc) {
+    $.couch.db(database).openDoc(doc).then(function(json) {
+      $("#title").text("/" + database + "/" + doc);
+      render("!/databases/"+database+"/" + doc, "document_tpl", {json:JSON.stringify(json, null, " ")});
     });
   });
 

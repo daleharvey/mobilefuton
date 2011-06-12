@@ -35,11 +35,15 @@
       </ul>
     </script>
 
+    <script type="text/html" id="document_tpl">
+      <div id="document"><pre><code>{{json}}</code></pre></div>
+    </script>
+
     <script type="text/html" id="database_tpl">
       <p style="text-align:center;margin:10px;">{{start}} to {{end}} of {{total_rows}}</p>
       <ul>
       {{#rows}}
-        <li><a href="#!/databases/{{id}}/" class="button">{{id}}</a></li>
+        <li><a href="#!/databases/{{database}}/{{id}}" class="button">{{id}}</a></li>
       {{/rows}}
       </ul>
     </script>

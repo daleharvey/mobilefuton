@@ -6,6 +6,8 @@ var Router = (function() {
 
   var PATH_REPLACER = "([^\/]+)",
       PATH_MATCHER  = /:([\w\d]+)/g,
+      WILD_MATCHER  = /\*([\w\d]+)/g,
+      WILD_REPLACER  = "(.*?)",
       preRouterFun  = null,
       fun404        = null,
       history       = [],
@@ -52,10 +54,13 @@ var Router = (function() {
   };
 
   function toRegex(path) {
-    return (path.constructor == String)
-      ? new RegExp("^"+path.replace(PATH_MATCHER, PATH_REPLACER)+"$")
-      : path;
-  };
+    if (path.constructor == String) {
+      return new RegExp("^" + path.replace(PATH_MATCHER, PATH_REPLACER)
+                          .replace(WILD_MATCHER, WILD_REPLACER) +"$");
+    } else {
+      return path;
+    }
+  }
 
   function route(verb, path, cb) {
     routes[verb].push({
