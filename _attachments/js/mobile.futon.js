@@ -107,20 +107,16 @@ var Tasks = (function () {
   });
 
   router.get("!/databases/", function () {
-    $.couch.allDbs({
-      success: function(data) {
-        $("#title").text("Databases");
-        render("!/databases/", "databases_tpl", {databases:data});
-      }
+    $.couch.allDbs({}).then(function(data) {
+      $("#title").text("Databases");
+      render("!/databases/", "databases_tpl", {databases:data});
     });
   });
 
   router.get("!/replication/", function () {
-    $.couch.allDbs({
-      success: function(data) {
-        $("#title").text("Replication");
-        render("!/replication/", "replication_tpl", {databases:data});
-      }
+    $.couch.allDbs({}).then(function(data) {
+      $("#title").text("Replication");
+      render("!/replication/", "replication_tpl", {databases:data});
     });
   });
 
