@@ -205,6 +205,10 @@ ul {
 li:first-child {
     border-radius:0.6em 0.6em 0px 0px;
 }
+li:first-child:last-child {
+    border-radius:0.6em;
+}
+
 li:last-child {
     border-radius:0px 0px 0.6em 0.6em;
     border-width:1px;
