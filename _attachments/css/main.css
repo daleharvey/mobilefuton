@@ -296,6 +296,14 @@ li input[type=text] {
     width:auto;
 }
 
+#config input[type=text] {
+    position:absolute;
+    right:0px;
+    top:-15px;
+}
+#config label {
+    position:relative;
+}
 li label {
     display:block;
     margin:10px;

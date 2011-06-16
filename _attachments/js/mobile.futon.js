@@ -132,6 +132,49 @@ var Tasks = (function () {
     });
   });
 
+  router.get("!/config/", function () {
+    $.couch.config().then(function(data) {
+      var html = "";
+      $.each(data, function(id) {
+        html += "<ul><li class='header'>" + id + "</li>";
+        $.each(data[id], function(opts) {
+          html += "<li><label>" + opts +
+            "<input type='text' name='" + id + ":" + opts +
+            "' value='"+data[id][opts]+"' /></li>";
+        });
+        html += "</ul>";
+      });
+      render("!/config/", "config_tpl", {config:html});
+    });
+  });
+
+  router.post("/config/", function (e, form) {
+
+    $("#saveconfig").val("Saving ...");
+
+    function setConfig(obj) {
+      return $.couch.config({}, obj.section, obj.key, obj.value);
+    }
+
+    $.couch.config().then(function(data) {
+      var changes = [];
+      $.each(form, function(name) {
+        var tmp = name.split(":");
+        if (data[tmp[0]][tmp[1]] != form[name]) {
+          changes.push({
+            section: tmp[0],
+            key: tmp[1],
+            value: form[name]
+          });
+        }
+      });
+
+      $.when.apply(this, $.map(changes, setConfig)).then(function() {
+        $("#saveconfig").val("Save Config");
+      });
+    });
+  });
+
   router.post("!/replication/", function (e, form) {
     if (!replicationExists(form)) {
       replications.push(form);
