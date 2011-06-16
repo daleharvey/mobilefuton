@@ -264,8 +264,17 @@ li a {
     color:white;
 }
 
-footer a { position:absolute; }
-footer h1 { color:white; text-align:center; margin:10px; font-size:1.5em; }
+footer a {
+    position:absolute;
+}
+footer h1 {
+    color:white;
+    text-align:center;
+    margin:10px;
+    font-size:1.5em;
+    white-space:nowrap;
+
+}
 
 li.header {
     padding: 0.5em 15px;
