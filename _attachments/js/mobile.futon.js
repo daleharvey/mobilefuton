@@ -133,7 +133,9 @@ var Tasks = (function () {
   });
 
   router.get("!/config/", function () {
-    $.couch.config().then(function(data) {
+    $.couch.config({error:function() {
+      render("!/config/", "unauthorized_tpl");
+    }}).then(function(data) {
       var html = "";
       $.each(data, function(id) {
         html += "<ul><li class='header'>" + id + "</li>";
