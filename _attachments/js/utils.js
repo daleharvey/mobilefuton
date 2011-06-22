@@ -91,16 +91,9 @@ var Router = (function() {
     }
   }
 
-  // function route(verb, path, cb) {
-  //   routes[verb].push({
-  //     path     : toRegex(path),
-  //     callback : cb
-  //   });
-  // }
-
   function urlChanged(maintainScroll) {
-    history.push(window.location.hash.slice(1));
-    trigger("GET", window.location.hash.slice(1));
+    history.push(window.location.hash);
+    trigger("GET", window.location.hash);
     if (maintainScroll !== true) {
       //window.scrollTo(0,0);
     }

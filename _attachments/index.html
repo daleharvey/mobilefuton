@@ -12,7 +12,7 @@
   <body>
 
     <footer>
-        <a href="#!" class="home plain_btn"><img src="./img/favicon.png" /></a>
+        <a href="#" class="home plain_btn"><img src="./img/favicon.png" /></a>
         <h1 id="title">CouchDB</h1>
     </footer>
 
@@ -24,11 +24,11 @@
         <p><strong>Current Host</strong><br />http://{{ip}}:{{port}}/</p>
       </div>
       <ul>
-        <li><a href="#!/databases/" class="button">Databases</a></li>
-        <li><a href="#!/replication/" class="button">Replication</a></li>
-        <li><a href="#!/tasks/" class="button">Active Tasks</a></li>
-        <li><a href="#!/couchapps/" class="button">CouchApps</a></li>
-        <li><a href="#!/config/" class="button">Config</a></li>
+        <li><a href="#/databases/" class="button">Databases</a></li>
+        <li><a href="#/replication/" class="button">Replication</a></li>
+        <li><a href="#/tasks/" class="button">Active Tasks</a></li>
+        <li><a href="#/couchapps/" class="button">CouchApps</a></li>
+        <li><a href="#/config/" class="button">Config</a></li>
       </ul>
 
       {{#adminparty}}
@@ -79,7 +79,7 @@
       <p style="text-align:center;margin:10px;">{{start}} to {{end}} of {{total_rows}}</p>
       <ul>
       {{#rows}}
-        <li><a href="#!/databases/{{database}}/{{id}}" class="button">{{id}}</a></li>
+        <li><a href="#/databases/{{database}}/{{id}}" class="button">{{id}}</a></li>
       {{/rows}}
       </ul>
     </script>
@@ -87,7 +87,7 @@
     <script type="text/html" id="databases_tpl">
       <ul id="db_list">
       {{#databases}}
-        <li><a href="#!/databases/{{.}}/" class="button">{{.}}</a></li>
+        <li><a href="#/databases/{{.}}/" class="button">{{.}}</a></li>
       {{/databases}}
       </ul>
     </script>
@@ -110,7 +110,7 @@
         {{^replications}}<li class="none">No Stored Replications</li>{{/replications}}
       </ul>
 
-      <form action="#!/replication/">
+      <form action="#/replication/">
         <ul>
           <li class="header">From</li>
           <li>
