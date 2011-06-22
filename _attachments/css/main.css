@@ -36,7 +36,7 @@ a {
     /* background:green !important; */
 }
 
-table { width:100%;}
+table { width:100%; background:transparent;}
 td { padding:10px; }
 .val { font-weight:bold; text-align:right;}
 
@@ -345,7 +345,7 @@ option {
 
 .none {
     text-align:center;
-    padding:5px;
+    padding:10px;
 }
 
 #stored { margin-bottom:30px; }
@@ -378,3 +378,5 @@ option {
 
 .info { text-align:center; }
 .info p { margin: 8px; }
+
+.label { text-align:right; font-weight:normal; width: 70px;}

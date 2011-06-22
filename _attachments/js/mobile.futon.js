@@ -17,6 +17,7 @@ var Tasks = (function () {
 
   var mainDb  = document.location.pathname.split("/")[1],
       paneWidth = 0,
+  activeTasks = null,
       isMobile = Utils.isMobile(),
       router  = new Router(),
       current_tpl = null,
@@ -45,6 +46,14 @@ var Tasks = (function () {
       }
     }
   };
+
+  router.pre(function() {
+    if (activeTasks) {
+      clearInterval(activeTasks);
+      activeTasks = null;
+    }
+    return true;
+  });
 
   router.get(/^(!)?$/, function () {
     $("#title").text("CouchDB");
@@ -185,6 +194,22 @@ var Tasks = (function () {
       });
     });
   });
+
+  router.get("!/tasks/", function () {
+    $("#title").text("Active Tasks");
+    var showActiveTasks = function() {
+      $.couch.activeTasks({error:function(data) {
+        clearInterval(activeTasks);
+        activeTasks = null;
+        render("!/tasks/", "unauthorized_tpl");
+      }}).then(function(data) {
+        render("!/tasks/", "tasks_tpl", {tasks:data});
+      });
+    };
+    activeTasks = setInterval(showActiveTasks, 5000);
+    showActiveTasks();
+  });
+
 
   router.post("!/replication/", function (e, form) {
     if (!replicationExists(form)) {

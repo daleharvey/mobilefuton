@@ -26,6 +26,7 @@
       <ul>
         <li><a href="#!/databases/" class="button">Databases</a></li>
         <li><a href="#!/replication/" class="button">Replication</a></li>
+        <li><a href="#!/tasks/" class="button">Active Tasks</a></li>
         <li><a href="#!/couchapps/" class="button">CouchApps</a></li>
         <li><a href="#!/config/" class="button">Config</a></li>
       </ul>
@@ -43,7 +44,23 @@
           <input type="submit" value="Save Config" id="saveconfig" />
         </div>
       </form>
+    </script>
 
+    <script type="text/html" id="tasks_tpl">
+      <ul>
+        {{#tasks}}
+        <li>
+          <table>
+            <tr><td class="label">Pid:</td><td>{{pid}}</td></tr>
+            <tr><td class="label">Type:</td><td>{{type}}</td></tr>
+            <tr><td class="label">Task:</td><td>{{task}}</td></tr>
+            <tr><td class="label">Status:</td><td>{{status}}</td></tr>
+          </table>
+        </li>
+        {{/tasks}}
+        {{^tasks}}<li class="none">No Tasks</li>{{/tasks}}
+
+      </ul>
     </script>
 
     <script type="text/html" id="couchapps_tpl">
