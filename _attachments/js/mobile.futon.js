@@ -48,17 +48,18 @@ var Tasks = (function () {
 
   router.get(/^(!)?$/, function () {
     $("#title").text("CouchDB");
-    $.couch.session({}).then(function(data) {
-      var tpldata = {
-        ip:params.ip || document.location.hostname,
-        port:document.location.port || 80
-      };
-      if (data.userCtx.roles.indexOf("_admin") != -1) {
-        tpldata.adminparty = true;
-      }
-      console.log(tpldata);
-      render(/^(!)?$/, "home_tpl", tpldata);
-    });
+    $.when.apply(this, [$.couch.session({}), $.couch.info()])
+      .then(function(data, info) {
+        var tpldata = {
+          ip:params.ip || document.location.hostname,
+          port:document.location.port || 80,
+          version:info[0].version
+        };
+        if (data[0].userCtx.roles.indexOf("_admin") != -1) {
+          tpldata.adminparty = true;
+        }
+        render(/^(!)?$/, "home_tpl", tpldata);
+      });
   });
 
   router.get("!/couchapps/", function () {

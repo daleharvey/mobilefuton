@@ -36,6 +36,10 @@ a {
     /* background:green !important; */
 }
 
+table { width:100%;}
+td { padding:10px; }
+.val { font-weight:bold; text-align:right;}
+
 /* FORMS */
 
 input[type=text],input[type=password], textarea {
@@ -352,12 +356,15 @@ option {
     padding:10px;
     border-radius:5px;
     -moz-box-shadow:0px 1px 2px #666;
+    -webkit-box-shadow:0px 1px 2px #666;
     background:#CCC;
     text-align:center;
     background: -moz-linear-gradient(center top,
                                      #F9F9F9, #E3E3E3) repeat scroll 0 0 transparent;
     background: -webkit-gradient(linear, 0% 40%, 0% 70%,
                                   from(#F9F9F9), to(#E3E3E3));
+    border: 1px solid #BBBBBB;
+
 }
 
 #unauthorized h1 {
@@ -368,3 +375,6 @@ option {
 }
 
 .adminparty { color:#999; text-align:center; margin:20px;}
+
+.info { text-align:center; }
+.info p { margin: 8px; }

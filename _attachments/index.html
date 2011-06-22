@@ -19,8 +19,10 @@
     <div id="content"></div>
 
     <script type="text/html" id="home_tpl">
-      <p style="text-align:center;margin:10px;">Current IP: <strong>http://{{ip}}:{{port}}/</strong></p>
-
+      <div class="info">
+        <p><strong>Version:</strong><br />{{version}}</p>
+        <p><strong>Current Host</strong><br />http://{{ip}}:{{port}}/</p>
+      </div>
       <ul>
         <li><a href="#!/databases/" class="button">Databases</a></li>
         <li><a href="#!/replication/" class="button">Replication</a></li>
