@@ -8,7 +8,6 @@ var Router = (function() {
       lastPage      = null,
       history       = [],
       params        = {},
-
       routes        = {GET: [], POST: []};
 
   $.each(document.location.search.slice(1).split("&"), function(i, param) {
@@ -32,31 +31,22 @@ var Router = (function() {
   }
 
   function get(path, cb) {
-    var key = path.toString();
-    if (!routes.GET[key]) {
-      routes.GET[key] = {};
-    }
-    routes.GET[key].load = cb;
-    routes.GET[key].path = path;
+    var obj = {path:path, load:cb};
+    routes.GET.push(obj);
     return {
       unload: function(unloadCallback) {
-        routes.GET[key].unload = unloadCallback;
+        obj.unload = unloadCallback;
       },
       opts: function(opts) {
-        routes.GET[key].opts = opts;
+        obj.opts = opts;
       }
     };
   }
 
   function post(path, cb) {
-    var key = path.toString();
-    if (!routes.POST[key]) {
-      routes.POST[key] = {};
-    }
-    var obj = routes.POST[key];
-    obj.path = path;
-    obj.load = cb;
-      return {
+    var obj = {path:path, load:cb};
+    routes.POST.push(obj);
+    return {
       unload: function(unloadCallback) {
         obj.unload = unloadCallback;
       },
@@ -89,6 +79,10 @@ var Router = (function() {
     if (maintainScroll !== true) {
       //window.scrollTo(0,0);
     }
+  }
+
+  function forward(url) {
+    trigger("GET", url);
   }
 
   function formSubmitted(e) {
@@ -127,10 +121,10 @@ var Router = (function() {
 
   function matchPath(verb, path) {
     var i, tmp, arr = routes[verb];
-    for (var key in routes[verb]) {
-      tmp = path.match(routes[verb][key].path);
+    for (i = 0; i < arr.length; i++) {
+      tmp = path.match(toRegex(arr[i].path));
       if (tmp) {
-        return {"match":tmp, "details":routes[verb][key]};
+        return {"match":tmp, "details":arr[i]};
       }
     }
     return false;
@@ -153,6 +147,7 @@ var Router = (function() {
   }
 
   return {
+    forward : forward,
     back    : back,
     get     : get,
     post    : post,

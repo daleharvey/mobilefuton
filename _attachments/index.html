@@ -76,6 +76,15 @@
     </script>
 
     <script type="text/html" id="database_tpl">
+      <div style="padding:10px">
+      <select name="source" id="views_select">
+        <option value="_all_docs">All Documents</option>
+        <option value="_design_docs">Design Documents</option>
+        {{#views}}
+        <option value="{{ddoc}}-{{name}}">{{id}}/{{name}}</option>
+        {{/views}}
+      </select>
+      </div>
       <p style="text-align:center;margin:10px;">{{start}} to {{end}} of {{total_rows}}</p>
       <ul>
       {{#rows}}
@@ -85,6 +94,7 @@
     </script>
 
     <script type="text/html" id="databases_tpl">
+
       <ul id="db_list">
       {{#databases}}
         <li><a href="#/databases/{{.}}/" class="button">{{.}}</a></li>

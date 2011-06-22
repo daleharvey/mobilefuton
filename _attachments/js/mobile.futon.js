@@ -100,16 +100,42 @@ var MobileFuton = (function () {
   });
 
   router.get("#/databases/:database/", function (database) {
+    router.forward("#/databases/" + database + "/views/_all_docs");
+  });
 
+  router.get("#/databases/:database/views/*view", function (database, view) {
+    var viewname = view.replace("-", "/");
+    $("#title").text(database + "/" + viewname);
     $.couch.db(database).allDesignDocs({include_docs:true}).then(function(ddocs) {
-      console.log(ddocs);
-      $.couch.db(database).allDocs({}).then(function(data) {
-        $("#title").text(database);
+      var views = [];
+      $.each(ddocs.rows, function(ddoc) {
+        var id = ddocs.rows[ddoc].doc._id;
+        $.each(ddocs.rows[ddoc].doc.views, function(v) {
+          views.push({id:id, ddoc:id.replace("_design/", ""), name:v});
+        });
+      });
+
+      var callback = function(data) {
         data.database = database;
         data.start = 1;
         data.end = data.total_rows;
-        renderer.render("database_tpl", data);
-      });
+        data.views = views;
+        renderer.render("database_tpl", data, {}, function(tpl) {
+          $("#views_select option[value=" + view + "]", tpl).attr("selected", "selected");
+          $("#views_select", tpl).bind("change", function() {
+            document.location.href = "#/databases/" + database + "/views/" +
+              $(this).val();
+          });
+        });
+      };
+
+      if (view === "_all_docs") {
+        $.couch.db(database).allDocs({}).then(callback);
+      } else if (view === "_design_docs") {
+        $.couch.db(database).allDesignDocs({}).then(callback);
+      } else {
+        $.couch.db(database).view(viewname, {}).then(callback);
+      }
 
     });
   });
@@ -121,7 +147,7 @@ var MobileFuton = (function () {
     });
   });
 
-  router.get("/databases/", function () {
+  router.get("#/databases/", function () {
     $.couch.allDbs({}).then(function(data) {
       $("#title").text("Databases");
       renderer.render("databases_tpl", {databases:data});

@@ -30,13 +30,17 @@ var Renderer = (function() {
     }
   }
 
-  function render(tpl, data, opts) {
+  function render(tpl, data, opts, callback) {
 
     opts = opts || {};
     data = data || {};
 
     var rendered = Mustache.to_html($("#" + tpl).html(), data),
     $pane = $("<div class='pane'><div class='content'>" + rendered + "</div></div>");
+
+    if (callback) {
+      callback($pane);
+    }
 
     if (opts.notransition) {
 
@@ -45,7 +49,6 @@ var Renderer = (function() {
         lastPane.remove();
       }
       lastPane = $pane;
-
     // } else if (transition === 'slideUp') {
 
     //   $("#content").one("webkitTransitionEnd transitionend", function() {
