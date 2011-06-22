@@ -67,7 +67,7 @@ var Tasks = (function () {
         if (data[0].userCtx.roles.indexOf("_admin") != -1) {
           tpldata.adminparty = true;
         }
-        render(/^(!)?$/, "home_tpl", tpldata);
+        render("home_tpl", tpldata);
       });
   });
 
@@ -93,7 +93,7 @@ var Tasks = (function () {
                 }
                 if (completed === max) {
                     $("#title").text("Couchapps");
-                    render("!/couchapps/", "couchapps_tpl", {couchapps:couchapps});
+                    render("couchapps_tpl", {couchapps:couchapps});
                 }
             }
         });
@@ -124,28 +124,28 @@ var Tasks = (function () {
       data.database = database;
       data.start = 1;
       data.end = data.total_rows;
-      render("!/databases/"+database+"/", "database_tpl", data);
+      render("database_tpl", data);
     });
   });
 
   router.get("!/databases/:database/*doc", function (database, doc) {
     $.couch.db(database).openDoc(doc).then(function(json) {
       $("#title").text("/" + database + "/" + doc);
-      render("!/databases/"+database+"/" + doc, "document_tpl", {json:JSON.stringify(json, null, " ")});
+      render("document_tpl", {json:JSON.stringify(json, null, " ")});
     });
   });
 
   router.get("!/databases/", function () {
     $.couch.allDbs({}).then(function(data) {
       $("#title").text("Databases");
-      render("!/databases/", "databases_tpl", {databases:data});
+      render("databases_tpl", {databases:data});
     });
   });
 
   router.get("!/replication/", function () {
     $.couch.allDbs({}).then(function(data) {
       $("#title").text("Replication");
-      render("!/replication/", "replication_tpl", {databases:data, replications:replications});
+      render("replication_tpl", {databases:data, replications:replications});
     });
   });
 
@@ -164,7 +164,7 @@ var Tasks = (function () {
         });
         html += "</ul>";
       });
-      render("!/config/", "config_tpl", {config:html});
+      render("config_tpl", {config:html});
     });
   });
 
@@ -197,13 +197,15 @@ var Tasks = (function () {
 
   router.get("!/tasks/", function () {
     $("#title").text("Active Tasks");
+    var slidein = false;
     var showActiveTasks = function() {
       $.couch.activeTasks({error:function(data) {
         clearInterval(activeTasks);
         activeTasks = null;
-        render("!/tasks/", "unauthorized_tpl");
+        render("unauthorized_tpl");
       }}).then(function(data) {
-        render("!/tasks/", "tasks_tpl", {tasks:data});
+        render("tasks_tpl", {tasks:data}, {notransition:slidein});
+        slidein = true;
       });
     };
     activeTasks = setInterval(showActiveTasks, 5000);
@@ -236,13 +238,11 @@ var Tasks = (function () {
     return false;
   }
 
-  function render(url, tpl, data) {
+  function render(tpl, data, opts) {
 
-   if (router.matchesCurrent(url) === null) {
-      return;
-    }
-
+    opts = opts || {};
     data = data || {};
+
     $("body").removeClass(current_tpl).addClass(tpl);
 
     var rendered = Mustache.to_html($("#" + tpl).html(), data),
@@ -262,7 +262,15 @@ var Tasks = (function () {
 
     var transition = templates[tpl] && templates[tpl].transition;
 
-    if (transition === 'slideUp') {
+    if (opts.notransition) {
+
+      $pane.css({"left":currentOffset}).appendTo($("#content"));
+      if (lastPane) {
+        lastPane.remove();
+      }
+      lastPane = $pane;
+
+    } else if (transition === 'slideUp') {
 
       $("#content").one("webkitTransitionEnd transitionend", function() {
         if (lastPane) {
