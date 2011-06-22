@@ -48,9 +48,16 @@ var Tasks = (function () {
 
   router.get(/^(!)?$/, function () {
     $("#title").text("CouchDB");
-    render(/^(!)?$/, "home_tpl", {
-      ip:params.ip || document.location.hostname,
-      port:document.location.port || 80
+    $.couch.session({}).then(function(data) {
+      var tpldata = {
+        ip:params.ip || document.location.hostname,
+        port:document.location.port || 80
+      };
+      if (data.userCtx.roles.indexOf("_admin") != -1) {
+        tpldata.adminparty = true;
+      }
+      console.log(tpldata);
+      render(/^(!)?$/, "home_tpl", tpldata);
     });
   });
 
@@ -133,6 +140,7 @@ var Tasks = (function () {
   });
 
   router.get("!/config/", function () {
+    $("#title").text("Config");
     $.couch.config({error:function() {
       render("!/config/", "unauthorized_tpl");
     }}).then(function(data) {

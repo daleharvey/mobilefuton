@@ -20,12 +20,18 @@
 
     <script type="text/html" id="home_tpl">
       <p style="text-align:center;margin:10px;">Current IP: <strong>http://{{ip}}:{{port}}/</strong></p>
+
       <ul>
         <li><a href="#!/databases/" class="button">Databases</a></li>
         <li><a href="#!/replication/" class="button">Replication</a></li>
         <li><a href="#!/couchapps/" class="button">CouchApps</a></li>
         <li><a href="#!/config/" class="button">Config</a></li>
       </ul>
+
+      {{#adminparty}}
+      <p class="adminparty">You are currently in Admin Party! register an admin to turn if off.</p>
+      {{/adminparty}}
+
     </script>
 
     <script type="text/html" id="config_tpl">
