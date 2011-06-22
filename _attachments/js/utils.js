@@ -8,16 +8,22 @@ var Router = (function() {
       PATH_MATCHER  = /:([\w\d]+)/g,
       WILD_MATCHER  = /\*([\w\d]+)/g,
       WILD_REPLACER  = "(.*?)",
-      preRouterFun  = null,
       fun404        = null,
+      lastPage      = null,
       history       = [],
+      params        = {},
       routes        = {GET: [], POST: []};
+
+  $.each(document.location.search.slice(1).split("&"), function(i, param) {
+    var tmp = param.split("=");
+    params[tmp[0]] = tmp[1];
+  });
 
   // Needs namespaced and decoupled and stuff
   function init() {
     $(window).bind("hashchange", urlChanged).trigger("hashchange");
     $(document).bind("submit", formSubmitted);
-  };
+  }
 
   function back() {
     history.pop(); // current url
@@ -26,32 +32,55 @@ var Router = (function() {
     } else {
       document.location.href = "#";
     }
-  };
+  }
 
   function get(path, cb) {
-    route("GET", path, cb);
-  };
+    var key = path.toString();
+    if (!routes.GET[key]) {
+      routes.GET[key] = {};
+    }
+    routes.GET[key].load = cb;
+    routes.GET[key].path = path;
+    return {
+      unload: function(unloadCallback) {
+        routes.GET[key].unload = unloadCallback;
+      },
+      opts: function(opts) {
+        routes.GET[key].opts = opts;
+      }
+    };
+  }
 
   function post(path, cb) {
-    route("POST", path, cb);
-  };
+    var key = path.toString();
+    if (!routes.POST[key]) {
+      routes.POST[key] = {};
+    }
+    var obj = routes.POST[key];
+    obj.path = path;
+    obj.load = cb;
+      return {
+      unload: function(unloadCallback) {
+        obj.unload = unloadCallback;
+      },
+      opts: function(opts) {
+        obj.opts = opts;
+      }
+    };
+  }
 
   function refresh(maintainScroll) {
     urlChanged(maintainScroll);
-  };
-
-  function preRouter(fun) {
-    preRouterFun = fun;
-  };
+  }
 
   function error404(fun) {
     fun404 = fun;
-  };
+  }
 
   function go(url) {
     document.location.hash = url;
     window.scrollTo(0,0);
-  };
+  }
 
   function toRegex(path) {
     if (path.constructor == String) {
@@ -62,12 +91,12 @@ var Router = (function() {
     }
   }
 
-  function route(verb, path, cb) {
-    routes[verb].push({
-      path     : toRegex(path),
-      callback : cb
-    });
-  };
+  // function route(verb, path, cb) {
+  //   routes[verb].push({
+  //     path     : toRegex(path),
+  //     callback : cb
+  //   });
+  // }
 
   function urlChanged(maintainScroll) {
     history.push(window.location.hash.slice(1));
@@ -75,7 +104,7 @@ var Router = (function() {
     if (maintainScroll !== true) {
       //window.scrollTo(0,0);
     }
-  };
+  }
 
   function formSubmitted(e) {
 
@@ -88,11 +117,6 @@ var Router = (function() {
   }
 
   function trigger(verb, url, ctx, data) {
-    if (preRouterFun) {
-      if (!preRouterFun(verb, url, ctx)) {
-        return;
-      }
-    }
     var match = matchPath(verb, url);
     if (match) {
       var args = match.match.slice(1);
@@ -100,28 +124,32 @@ var Router = (function() {
         args.unshift(data);
         args.unshift(ctx);
       }
-      match.details.callback.apply(this, args);
+      if (lastPage && lastPage.unload) {
+        lastPage.unload.apply(this, args);
+      }
+      match.details.load.apply(this, args);
+      lastPage = match.details;
     } else {
       if (fun404) {
         fun404(verb, url);
       }
     }
-  };
+  }
 
   function matchesCurrent(needle) {
     return window.location.hash.slice(1).match(toRegex(needle));
-  };
+  }
 
   function matchPath(verb, path) {
     var i, tmp, arr = routes[verb];
-    for (i = 0; i < arr.length; i += 1) {
-      tmp = path.match(arr[i].path);
+    for (var key in routes[verb]) {
+      tmp = path.match(routes[verb][key].path);
       if (tmp) {
-        return {"match":tmp, "details":arr[i]};
+        return {"match":tmp, "details":routes[verb][key]};
       }
     }
     return false;
-  };
+  }
 
   function serialize(obj) {
     var o = {};
@@ -137,7 +165,7 @@ var Router = (function() {
       }
     });
     return o;
-  };
+  }
 
   return {
     go      : go,
@@ -146,9 +174,9 @@ var Router = (function() {
     post    : post,
     init    : init,
     matchesCurrent : matchesCurrent,
-    pre     : preRouter,
     refresh : refresh,
-    error404 : error404
+    error404 : error404,
+    params : params
   };
 
 });

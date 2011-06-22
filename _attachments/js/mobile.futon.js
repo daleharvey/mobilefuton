@@ -10,70 +10,159 @@ $.ajaxSetup({
   cache: false
 });
 
-// Doesnt handle ghosted events, will survive for now
-var pressed = Utils.isMobile() ? "click" : "click";
 
-var Tasks = (function () {
-
-  var mainDb  = document.location.pathname.split("/")[1],
-      paneWidth = 0,
-  activeTasks = null,
-      isMobile = Utils.isMobile(),
-      router  = new Router(),
-      current_tpl = null,
-      slidePane = null,
-      docs    = {},
-      tasks   = [],
-      servers = [],
-      replications = localStorage.replications && JSON.parse(localStorage.replications) || [],
-      zIndex  = 0,
-      currentOffset = 0,
-      lastPane = null,
-      $db     = $.couch.db(mainDb);
-
-  var params = {};
-  $.each(document.location.search.slice(1).split("&"), function(i, param) {
-    var tmp = param.split("=");
-    params[tmp[0]] = tmp[1];
-  });
-
-  var templates = {
-    home_tpl : {
-      transition : "slideHorizontal",
-      events : {
-      },
-      init : function(dom) {
-      }
+var localData = (function(){
+  if (typeof(localStorage) == 'undefined' ) {
+    return false;
+  }
+  return {
+    set:function(prop, val){
+      localStorage.setItem(prop, JSON.stringify(val));
+    },
+    get:function(prop, def){
+      return JSON.parse(localStorage.getItem(prop)) || def;
+    },
+    remove:function(prop){
+      localStorage.removeItem(prop);
     }
   };
+})();
 
-  router.pre(function() {
-    if (activeTasks) {
-      clearInterval(activeTasks);
-      activeTasks = null;
-    }
-    return true;
+
+var Renderer = (function() {
+
+  var paneWidth = 0,
+      currentOffset = 0,
+      current_tpl   = null,
+      lastPane  = null;
+
+  $(window).bind("resize", function () {
+    paneWidth = $("body").width();
   });
+  $(window).resize();
+
+  function transformY(dom, x) {
+    if (Modernizr.csstransforms3d) {
+      dom.css("-moz-transform", "translate3d(0, " + x + "px, 0)")
+        .css("-webkit-transform", "translate3d(0, " + x + "px, 0)");
+    } else {
+      dom.css("-moz-transform", "translate(0, " + x + "px)")
+        .css("-webkit-transform", "translate(0, " + x + "px)");
+    }
+  }
+
+  function transformX(dom, x) {
+    if (Modernizr.csstransforms3d) {
+      dom.css("-moz-transform", "translate3d(" + x + "px, 0, 0)")
+        .css("-webkit-transform", "translate3d(" + x + "px, 0, 0)");
+    } else {
+      dom.css("-moz-transform", "translate(" + x + "px, 0)")
+        .css("-webkit-transform", "translate(" + x + "px, 0)");
+    }
+  }
+
+  function render(tpl, data, opts) {
+
+    opts = opts || {};
+    data = data || {};
+
+    var rendered = Mustache.to_html($("#" + tpl).html(), data),
+    $pane = $("<div class='pane'><div class='content'>" + rendered + "</div></div>");
+
+    if (opts.notransition) {
+
+      $pane.css({"left":currentOffset}).appendTo($("#content"));
+      if (lastPane) {
+        lastPane.remove();
+      }
+      lastPane = $pane;
+
+    // } else if (transition === 'slideUp') {
+
+    //   $("#content").one("webkitTransitionEnd transitionend", function() {
+    //     if (lastPane) {
+    //       lastPane.hide();
+    //     }
+    //   });
+
+    //   slidePane = $pane.addClass("slidepane")
+    //     .css({left:currentOffset, top:-$(window).height(), 'z-index': 3})
+    //     .appendTo("#content");
+    //   transformY(slidePane, $(window).height());
+
+    // } else if (slidePane) {
+
+    //   if (lastPane) {
+    //     lastPane.remove();
+    //     lastPane = null;
+    //   }
+
+    //   $pane.css({"left":currentOffset}).appendTo($("#content"));
+    //   transformY(slidePane, 0);
+    //   lastPane = $pane;
+
+    //   slidePane.one("webkitTransitionEnd transitionend", function() {
+    //     slidePane.remove();
+    //     slidePane = null;
+    //   });
+
+    } else {
+
+      if (current_tpl) {
+        currentOffset += true ? paneWidth : -paneWidth;
+      }
+
+      var tmp = lastPane;
+      $("#content").one("webkitTransitionEnd transitionend", function() {
+        if (tmp) {
+          tmp.remove();
+          tmp = null;
+        }
+      });
+
+      transformX($pane, currentOffset);
+      $pane.appendTo($("#content"));
+
+      transformX($("#content"), -currentOffset);
+      lastPane = $pane;
+    }
+    current_tpl = tpl;
+  }
+
+  return {
+    render: render
+  };
+});
+
+var MobileFuton = (function () {
+
+  var mainDb        = document.location.pathname.split("/")[1],
+      paneWidth     = 0,
+      activeTasks   = null,
+      router        = new Router(),
+      renderer      = new Renderer(),
+      docs          = {},
+      replications  = localData.get("replications", []),
+      lastPane      = null;
 
   router.get(/^(!)?$/, function () {
     $("#title").text("CouchDB");
     $.when.apply(this, [$.couch.session({}), $.couch.info()])
       .then(function(data, info) {
         var tpldata = {
-          ip:params.ip || document.location.hostname,
+          ip:router.params.ip || document.location.hostname,
           port:document.location.port || 80,
           version:info[0].version
         };
         if (data[0].userCtx.roles.indexOf("_admin") != -1) {
           tpldata.adminparty = true;
         }
-        render("home_tpl", tpldata);
+        renderer.render("home_tpl", tpldata);
       });
   });
 
   router.get("!/couchapps/", function () {
 
-    //
     var completed = 0;
     var couchapps = [];
 
@@ -82,36 +171,36 @@ var Tasks = (function () {
     }
 
     function isCouchApp(ddoc, max) {
-        var url = "/" + ddoc.database + "/" + ddoc.ddoc + "/index.html";
-        $.ajax({
-            type:"HEAD",
-            url:url,
-            complete: function(xhr) {
-                completed++;
-                if (xhr.status === 200) {
-                    couchapps.push({url:url, name:ddoc.ddoc.split("/")[1]});
-                }
-                if (completed === max) {
-                    $("#title").text("Couchapps");
-                    render("couchapps_tpl", {couchapps:couchapps});
-                }
-            }
-        });
+      var url = "/" + ddoc.database + "/" + ddoc.ddoc + "/index.html";
+      $.ajax({
+        type:"HEAD",
+        url:url,
+        complete: function(xhr) {
+          completed++;
+          if (xhr.status === 200) {
+            couchapps.push({url:url, name:ddoc.ddoc.split("/")[1]});
+          }
+          if (completed === max) {
+            $("#title").text("Couchapps");
+            renderer.render("couchapps_tpl", {couchapps:couchapps});
+          }
+        }
+      });
     }
 
     $.couch.allDbs({
       success: function(data) {
         $.when.apply(this, $.map(data, designDocs)).then(function() {
-            var designDocs = [];
-            $.each(arguments, function(id, ddocs) {
-                $.each(ddocs[0].rows, function(ddocid, ddoc) {
-                    designDocs.push({database:data[id], ddoc:ddoc.id});
-                });
+          var designDocs = [];
+          $.each(arguments, function(id, ddocs) {
+            $.each(ddocs[0].rows, function(ddocid, ddoc) {
+              designDocs.push({database:data[id], ddoc:ddoc.id});
             });
+          });
 
-            $.map(designDocs, function(ddoc) {
-                isCouchApp(ddoc, designDocs.length);
-            });
+          $.map(designDocs, function(ddoc) {
+            isCouchApp(ddoc, designDocs.length);
+          });
 
         });
       }
@@ -124,35 +213,38 @@ var Tasks = (function () {
       data.database = database;
       data.start = 1;
       data.end = data.total_rows;
-      render("database_tpl", data);
+      renderer.render("database_tpl", data);
     });
   });
 
   router.get("!/databases/:database/*doc", function (database, doc) {
     $.couch.db(database).openDoc(doc).then(function(json) {
       $("#title").text("/" + database + "/" + doc);
-      render("document_tpl", {json:JSON.stringify(json, null, " ")});
+      renderer.render("document_tpl", {json:JSON.stringify(json, null, " ")});
     });
   });
 
   router.get("!/databases/", function () {
     $.couch.allDbs({}).then(function(data) {
       $("#title").text("Databases");
-      render("databases_tpl", {databases:data});
+      renderer.render("databases_tpl", {databases:data});
     });
   });
 
   router.get("!/replication/", function () {
     $.couch.allDbs({}).then(function(data) {
       $("#title").text("Replication");
-      render("replication_tpl", {databases:data, replications:replications});
+      renderer.render("replication_tpl", {
+        databases:data,
+        replications:replications
+      });
     });
   });
 
   router.get("!/config/", function () {
     $("#title").text("Config");
     $.couch.config({error:function() {
-      render("!/config/", "unauthorized_tpl");
+      renderer.render("!/config/", "unauthorized_tpl");
     }}).then(function(data) {
       var html = "";
       $.each(data, function(id) {
@@ -164,12 +256,11 @@ var Tasks = (function () {
         });
         html += "</ul>";
       });
-      render("config_tpl", {config:html});
+      renderer.render("config_tpl", {config:html});
     });
   });
 
   router.post("/config/", function (e, form) {
-
     $("#saveconfig").val("Saving ...");
 
     function setConfig(obj) {
@@ -202,21 +293,24 @@ var Tasks = (function () {
       $.couch.activeTasks({error:function(data) {
         clearInterval(activeTasks);
         activeTasks = null;
-        render("unauthorized_tpl");
+        renderer.render("unauthorized_tpl");
       }}).then(function(data) {
-        render("tasks_tpl", {tasks:data}, {notransition:slidein});
+        renderer.render("tasks_tpl", {tasks:data}, {notransition:slidein});
         slidein = true;
       });
     };
     activeTasks = setInterval(showActiveTasks, 5000);
     showActiveTasks();
+  }).unload(function() {
+    clearInterval(activeTasks);
+    activeTasks = null;
   });
 
 
   router.post("!/replication/", function (e, form) {
     if (!replicationExists(form)) {
       replications.push(form);
-      localStorage.replications = JSON.stringify(replications);
+      localData.set("replications", replications);
     }
     var reOpts = {create_target:true};
     if (form.continous == "on") {
@@ -231,115 +325,12 @@ var Tasks = (function () {
 
   function replicationExists(data) {
     for(var i = replications.length; i < replications.length; i++) {
-      if (replications[i].source == data.source && replications[i].target === data.target) {
+      if (replications[i].source == data.source &&
+          replications[i].target === data.target) {
         return true;
       }
     }
     return false;
-  }
-
-  function render(tpl, data, opts) {
-
-    opts = opts || {};
-    data = data || {};
-
-    $("body").removeClass(current_tpl).addClass(tpl);
-
-    var rendered = Mustache.to_html($("#" + tpl).html(), data),
-    $pane = $("<div class='pane'><div class='content'>" + rendered + "</div></div>");
-
-    // Bind this templates events
-    var events = templates[tpl] && templates[tpl].events;
-    if (events) {
-      for (var key in events) {
-        $(key, $pane).bind(events[key].event + ".custom", events[key].callback);
-      }
-    }
-
-    if (templates[tpl] && templates[tpl].init) {
-      templates[tpl].init($pane);
-    }
-
-    var transition = templates[tpl] && templates[tpl].transition;
-
-    if (opts.notransition) {
-
-      $pane.css({"left":currentOffset}).appendTo($("#content"));
-      if (lastPane) {
-        lastPane.remove();
-      }
-      lastPane = $pane;
-
-    } else if (transition === 'slideUp') {
-
-      $("#content").one("webkitTransitionEnd transitionend", function() {
-        if (lastPane) {
-          lastPane.hide();
-        }
-      });
-
-      slidePane = $pane.addClass("slidepane")
-        .css({left:currentOffset, top:-$(window).height(), 'z-index': 3})
-        .appendTo("#content");
-      transformY(slidePane, $(window).height());
-
-    } else if (slidePane) {
-
-      if (lastPane) {
-        lastPane.remove();
-        lastPane = null;
-      }
-
-      $pane.css({"left":currentOffset}).appendTo($("#content"));
-      transformY(slidePane, 0);
-      lastPane = $pane;
-
-      slidePane.one("webkitTransitionEnd transitionend", function() {
-        slidePane.remove();
-        slidePane = null;
-      });
-
-    } else {
-
-      if (current_tpl) {
-        currentOffset += true ? paneWidth : -paneWidth;
-      }
-
-      var tmp = lastPane;
-      $("#content").one("webkitTransitionEnd transitionend", function() {
-        if (tmp) {
-          tmp.remove();
-          tmp = null;
-        }
-      });
-
-      transformX($pane, currentOffset);
-      $pane.appendTo($("#content"));
-
-      transformX($("#content"), -currentOffset);
-      lastPane = $pane;
-    }
-    current_tpl = tpl;
-  }
-
-  function transformY(dom, x) {
-    if (Modernizr.csstransforms3d) {
-      dom.css("-moz-transform", "translate3d(0, " + x + "px, 0)")
-        .css("-webkit-transform", "translate3d(0, " + x + "px, 0)");
-    } else {
-      dom.css("-moz-transform", "translate(0, " + x + "px)")
-        .css("-webkit-transform", "translate(0, " + x + "px)");
-    }
-  }
-
-  function transformX(dom, x) {
-    if (Modernizr.csstransforms3d) {
-      dom.css("-moz-transform", "translate3d(" + x + "px, 0, 0)")
-        .css("-webkit-transform", "translate3d(" + x + "px, 0, 0)");
-    } else {
-      dom.css("-moz-transform", "translate(" + x + "px, 0)")
-        .css("-webkit-transform", "translate(" + x + "px, 0)");
-    }
   }
 
   $("#stored").live('mousedown', function(e) {
@@ -363,11 +354,6 @@ var Tasks = (function () {
       }
     }
   });
-
-  $(window).bind("resize", function () {
-    paneWidth = $("body").width();
-  });
-  $(window).resize();
 
   router.init();
 
