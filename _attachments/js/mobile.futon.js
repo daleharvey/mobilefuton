@@ -257,7 +257,7 @@ var MobileFuton = (function () {
 
 
   function replicationExists(data) {
-    for(var i = replications.length; i < replications.length; i++) {
+    for(var i = 0; i < replications.length; i++) {
       if (replications[i].source == data.source &&
           replications[i].target === data.target) {
         return true;
