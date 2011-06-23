@@ -79,7 +79,7 @@ textarea {
     height:140px;
 }
 
-input[type=submit] {
+input[type=submit], input[type=button] {
     font:1em Helvetica, arial, sans-serif;
     background: -moz-linear-gradient(center top,
                                      #F9F9F9, #E3E3E3) repeat scroll 0 0 transparent;

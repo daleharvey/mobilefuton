@@ -3,7 +3,8 @@
   <head>
 
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1">
+    <meta name="viewport"
+          content="width=device-width,minimum-scale=1,maximum-scale=1" />
     <title>Mobile Futon</title>
     <link rel="stylesheet" href="css/main.css">
 
@@ -12,8 +13,8 @@
   <body>
 
     <footer>
-        <a href="#" class="home plain_btn"><img src="./img/favicon.png" /></a>
-        <h1 id="title">CouchDB</h1>
+      <a href="#" class="home plain_btn"><img src="./img/favicon.png" /></a>
+      <h1 id="title">CouchDB</h1>
     </footer>
 
     <div id="content"></div>
@@ -32,7 +33,9 @@
       </ul>
 
       {{#adminparty}}
-      <p class="adminparty">You are currently in Admin Party! register an admin to turn if off.</p>
+      <p class="adminparty">
+        You are currently in Admin Party! register an admin to turn if off.
+      </p>
       {{/adminparty}}
 
     </script>
@@ -59,14 +62,13 @@
         </li>
         {{/tasks}}
         {{^tasks}}<li class="none">No Tasks</li>{{/tasks}}
-
       </ul>
     </script>
 
     <script type="text/html" id="couchapps_tpl">
       <ul>
         {{#couchapps}}
-            <li><a href="{{url}}" class="button">{{name}}</a></li>
+        <li><a href="{{url}}" class="button">{{name}}</a></li>
         {{/couchapps}}
       </ul>
     </script>
@@ -77,28 +79,30 @@
 
     <script type="text/html" id="database_tpl">
       <div class="selectwrapper">
-      <select name="source" id="views_select">
-        <option value="_all_docs">All Documents</option>
-        <option value="_design_docs">Design Documents</option>
-        {{#views}}
-        <option value="{{ddoc}}-{{name}}">{{id}}/{{name}}</option>
-        {{/views}}
-      </select>
+        <select name="source" id="views_select">
+          <option value="_all_docs">All Documents</option>
+          <option value="_design_docs">Design Documents</option>
+          {{#views}}
+          <option value="{{ddoc}}-{{name}}">{{id}}/{{name}}</option>
+          {{/views}}
+        </select>
       </div>
-      <p style="text-align:center;margin:10px;">{{start}} to {{end}} of {{total_rows}}</p>
+      <p style="text-align:center;margin:10px;">
+        {{start}} to {{end}} of {{total_rows}}
+      </p>
       <ul>
-      {{#rows}}
+        {{#rows}}
         <li><a href="#/databases/{{database}}/{{id}}" class="button">{{id}}</a></li>
-      {{/rows}}
+        {{/rows}}
       </ul>
     </script>
 
     <script type="text/html" id="databases_tpl">
 
       <ul id="db_list">
-      {{#databases}}
+        {{#databases}}
         <li><a href="#/databases/{{url}}/" class="button">{{name}}</a></li>
-      {{/databases}}
+        {{/databases}}
       </ul>
     </script>
 
@@ -113,11 +117,14 @@
       <ul id="stored">
         <li class="header">Previous Replications</li>
         {{#replications}}
-        <li data-source="{{source}}" data-target="{{target}}" data-continous="{{continous}}">
+        <li data-source="{{source}}" data-target="{{target}}"
+            data-continous="{{continous}}">
           <a class="replication">{{source}} => {{target}}</a>
         </li>
         {{/replications}}
-        {{^replications}}<li class="none">No Stored Replications</li>{{/replications}}
+        {{^replications}}
+        <li class="none">No Stored Replications</li>
+        {{/replications}}
       </ul>
 
       <form action="#/replication/">
@@ -145,12 +152,17 @@
         </ul>
         <ul>
           <li class="header">Options</li>
-          <li><label for="continous">
-              <input type="checkbox" id="continous" name="continous" /> Continous</label>
+          <li>
+            <label for="continous">
+              <input type="checkbox" id="continous" name="continous" /> Continous
+            </label>
           </li>
         </ul>
         <div style="padding:10px;">
           <input type="submit" value="replicate" />
+        </div>
+        <div style="padding:10px;">
+          <input type="button" value="clear" id="clear" />
         </div>
       </form>
     </script>

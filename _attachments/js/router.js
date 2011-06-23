@@ -56,10 +56,6 @@ var Router = (function() {
     };
   }
 
-  function refresh(maintainScroll) {
-    urlChanged(maintainScroll);
-  }
-
   function error404(fun) {
     fun404 = fun;
   }
@@ -153,7 +149,6 @@ var Router = (function() {
     post    : post,
     init    : init,
     matchesCurrent : matchesCurrent,
-    refresh : refresh,
     error404 : error404,
     params : params
   };

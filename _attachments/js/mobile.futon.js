@@ -165,6 +165,10 @@ var MobileFuton = (function () {
       renderer.render("replication_tpl", {
         databases:data,
         replications:replications
+      }, {}, function(tpl) {
+        $("#clear", tpl).bind('mousedown', function() {
+          window.location.reload();
+        });
       });
     });
   });
