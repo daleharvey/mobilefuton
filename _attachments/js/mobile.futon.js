@@ -104,13 +104,14 @@ var MobileFuton = (function () {
   });
 
   router.get("#/databases/:database/views/*view", function (database, view) {
+    database = decodeURIComponent(database);
     var viewname = view.replace("-", "/");
     $("#title").text(database + "/" + viewname);
     $.couch.db(database).allDesignDocs({include_docs:true}).then(function(ddocs) {
       var views = [];
       $.each(ddocs.rows, function(ddoc) {
         var id = ddocs.rows[ddoc].doc._id;
-        $.each(ddocs.rows[ddoc].doc.views, function(v) {
+        $.each(ddocs.rows[ddoc].doc.views || [], function(v) {
           views.push({id:id, ddoc:id.replace("_design/", ""), name:v});
         });
       });
@@ -141,6 +142,7 @@ var MobileFuton = (function () {
   });
 
   router.get("#/databases/:database/*doc", function (database, doc) {
+    database = decodeURIComponent(database);
     $.couch.db(database).openDoc(doc).then(function(json) {
       $("#title").text("/" + database + "/" + doc);
       renderer.render("document_tpl", {json:JSON.stringify(json, null, " ")});
@@ -150,6 +152,9 @@ var MobileFuton = (function () {
   router.get("#/databases/", function () {
     $.couch.allDbs({}).then(function(data) {
       $("#title").text("Databases");
+      data = $.map(data, function(url) {
+        return {url:encodeURIComponent(url), name:url};
+      });
       renderer.render("databases_tpl", {databases:data});
     });
   });
