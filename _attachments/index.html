@@ -118,8 +118,9 @@
         <li class="header">Previous Replications</li>
         {{#replications}}
         <li data-source="{{source}}" data-target="{{target}}"
-            data-continous="{{continous}}">
+            data-continous="{{continous}}" class="repl">
           <a class="replication">{{source}} => {{target}}</a>
+          <button class="delete">delete</button>
         </li>
         {{/replications}}
         {{^replications}}

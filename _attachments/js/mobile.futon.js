@@ -166,6 +166,15 @@ var MobileFuton = (function () {
         databases:data,
         replications:replications
       }, {}, function(tpl) {
+        $(".delete", tpl).bind('mousedown', function() {
+          var source = $(this).parents("li").data("source");
+          var target = $(this).parents("li").data("target");
+          var repl = $.grep(replications, function(obj) {
+            return !(obj.source === source && obj.target === target);
+          });
+          localData.set("replications", repl);
+          window.location.reload(true);
+        });
         $("#clear", tpl).bind('mousedown', function() {
           window.location.reload();
         });

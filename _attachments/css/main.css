@@ -57,7 +57,7 @@ input[type=text],input[type=password], textarea, select {
     resize: none;
     outline:none;
 
-font-size: 14px;
+    font-size: 14px;
     font-weight: bold;
     letter-spacing: 1.1px;
     opacity: 1;
@@ -412,3 +412,27 @@ option { font-weight:normal; text-shadow:none; padding:5px;    outline:none;}
 
 .selectwrapper { padding:10px;}
 .selectwrapper input[type="text"] { margin:0px; width:100%; }
+
+li:last-child .delete {
+    border-radius:0px 0px 5px 0px;
+}
+
+.delete {
+    position:absolute; right:0px; top:0px;
+    height:100%;
+    border-left:1px solid #AAA;
+    background:#666;
+    padding:0px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1.1px;
+    opacity: 1;
+    text-shadow: 1px 1px 1px #000;
+    color:white;
+
+
+}
+
+.repl {
+    position:relative;
+}
