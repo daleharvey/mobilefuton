@@ -295,16 +295,6 @@ li.header {
     text-shadow: 0 -1px 1px #254F7A;
 }
 
-li select {
-    display:block;
-    border:1px solid #CCC;
-    padding:4px;
-    -moz-box-sizing: border-box;
-    font:1em Helvetica,Arial,sans-serif;
-    font-weight:bold;
-    margin:10px;
-}
-
 li input[type=text] {
     -moz-box-sizing: border-box;
     border: 1px solid #CCCCCC;
@@ -385,6 +375,22 @@ option {
 
 .label { text-align:right; font-weight:normal; width: 70px;}
 
+select {
+    font-weight:bold;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    outline:none;
+    width:100%;
+    padding:10px 10px 0px 10px;
+    border-radius:5px;
+    -moz-box-shadow:0px 1px 2px #666;
+    -webkit-box-shadow:0px 1px 2px #666;
+    background: -moz-linear-gradient(center top,
+                                     #F9F9F9, #E3E3E3) repeat scroll 0 0 transparent;
+    background: -webkit-gradient(linear, 0% 40%, 0% 70%,
+                                  from(#F9F9F9), to(#E3E3E3));
+}
+
 #views_select {
     font-weight:bold;
     -moz-box-sizing: border-box;
@@ -403,3 +409,6 @@ option {
 }
 
 option { font-weight:normal; text-shadow:none; padding:5px;    outline:none;}
+
+.selectwrapper { padding:10px;}
+.selectwrapper input[type="text"] { margin:0px; width:100%; }
