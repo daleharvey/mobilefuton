@@ -114,6 +114,55 @@
     </script>
 
     <script type="text/html" id="replication_tpl">
+
+      <ul id="running">
+        <li class="header">Running Replications</li>
+        {{#running}}
+        <li data-source="{{source}}" data-target="{{target}}"
+            data-continuous="{{continuous}}" data-create_target="{{create_target}}"
+            class="repl">
+          <a class="replication">{{{source}} -> {{target}}</a>
+          <button class="cancel">cancel</button>
+        </li>
+        {{/running}}
+        {{^running}}
+        <li class="none">No Running Replications</li>
+        {{/running}}
+      </ul>
+
+      <form action="#/replication/">
+        <ul>
+          <li class="header">Create Replication</li>
+          <li>
+            <div class="selectwrapper">
+              From:
+              <select name="source" id="source_select">
+                {{#databases}}
+                <option value="{{.}}">{{.}}</option>
+                {{/databases}}
+                <option value="manual">Remote Database</option>
+              </select>
+            </div>
+            <div class="selectwrapper">
+              To:
+              <select name="target" id="target_select">
+                {{#databases}}
+                <option value="{{.}}">{{.}}</option>
+                {{/databases}}
+                <option value="manual">Remote Database</option>
+              </select>
+            </div>
+
+            <label for="continuous">
+              <input type="checkbox" id="continuous" name="continuous" /> Continuous
+            </label>
+          </li>
+        </ul>
+        <div style="padding:10px;">
+          <input type="submit" value="replicate" />
+        </div>
+      </form>
+
       <ul id="stored">
         <li class="header">Previous Replications</li>
         {{#replications}}
@@ -128,44 +177,6 @@
         {{/replications}}
       </ul>
 
-      <form action="#/replication/">
-        <ul>
-          <li class="header">From</li>
-          <li class="selectwrapper">
-            <select name="source" id="source_select">
-              {{#databases}}
-              <option value="{{.}}">{{.}}</option>
-              {{/databases}}
-              <option value="manual">Remote Database</option>
-            </select>
-          </li>
-        </ul>
-        <ul>
-          <li class="header">To</li>
-          <li class="selectwrapper">
-            <select name="target" id="target_select">
-              {{#databases}}
-              <option value="{{.}}">{{.}}</option>
-              {{/databases}}
-              <option value="manual">Remote Database</option>
-            </select>
-          </li>
-        </ul>
-        <ul>
-          <li class="header">Options</li>
-          <li>
-            <label for="continous">
-              <input type="checkbox" id="continous" name="continous" /> Continous
-            </label>
-          </li>
-        </ul>
-        <div style="padding:10px;">
-          <input type="submit" value="replicate" />
-        </div>
-        <div style="padding:10px;">
-          <input type="button" value="clear" id="clear" />
-        </div>
-      </form>
     </script>
 
   </body>

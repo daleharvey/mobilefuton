@@ -417,7 +417,7 @@ li:last-child .delete {
     border-radius:0px 0px 5px 0px;
 }
 
-.delete {
+.delete, .cancel {
     position:absolute; right:0px; top:0px;
     height:100%;
     border-left:1px solid #AAA;

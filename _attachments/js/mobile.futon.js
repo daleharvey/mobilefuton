@@ -10,6 +10,7 @@ $.ajaxSetup({
   cache: false
 });
 
+var nil = function() {};
 
 var localData = (function(){
   if (typeof(localStorage) == 'undefined' ) {
@@ -30,12 +31,12 @@ var localData = (function(){
 
 var MobileFuton = (function () {
 
-  var mainDb        = document.location.pathname.split("/")[1],
-      activeTasks   = null,
-      router        = new Router(),
-      renderer      = new Renderer(),
-      docs          = {},
-      replications  = localData.get("replications", []);
+  var mainDb        = document.location.pathname.split("/")[1]
+    , activeTasks   = null
+    , router        = new Router()
+    , renderer      = new Renderer()
+    , docs          = {}
+    , replications  = localData.get("replications", []);
 
   router.get(/^(#)?$/, function () {
     $("#title").text("CouchDB");
@@ -55,8 +56,8 @@ var MobileFuton = (function () {
 
   router.get("#/couchapps/", function () {
 
-    var completed = 0;
-    var couchapps = [];
+    var completed = 0
+      , couchapps = [];
 
     function designDocs(database) {
       return $.couch.db(database).allDesignDocs();
@@ -159,27 +160,81 @@ var MobileFuton = (function () {
     });
   });
 
-  router.get("#/replication/", function () {
-    $.couch.allDbs({}).then(function(data) {
-      $("#title").text("Replication");
-      renderer.render("replication_tpl", {
-        databases:data,
-        replications:replications
-      }, {}, function(tpl) {
-        $(".delete", tpl).bind('mousedown', function() {
-          var source = $(this).parents("li").data("source");
-          var target = $(this).parents("li").data("target");
-          var repl = $.grep(replications, function(obj) {
-            return !(obj.source === source && obj.target === target);
+  var parseReplicationTask = function(task) {
+
+    var parts = (task.replace(/`/g, "").split(/:(.+)?/))
+      , where = (parts[1].split("->"))
+      , obj = { source: $.trim(where[0])
+              , target: $.trim(where[1]) };
+
+    if (parts[0].match("continuous")) {
+      obj.continuous = true;
+    }
+
+    if (parts[0].match("create_target")) {
+      obj.create_target = true;
+    }
+
+    return obj;
+  };
+
+  var showReplications = function(transition) {
+
+    var opts = (transition !== true) ? {notransition:true} : {};
+
+    $.when.apply(this, [$.couch.allDbs({}), $.couch.activeTasks({})])
+          .then(function(alldb, tasksxhr) {
+            data = alldb[0];
+            var tasks = [];
+            for(var i = 0; i < tasksxhr[0].length; i++) {
+              if (tasksxhr[0][i].type === "Replication") {
+                tasks.push(parseReplicationTask(tasksxhr[0][i].task));
+              }
+            }
+            $("#title").text("Replication");
+            renderer.render("replication_tpl", {
+              running:tasks,
+              databases:data,
+              replications:replications
+            }, opts, function(tpl) {
+              $(".delete", tpl).bind('mousedown', function() {
+                var source = $(this).parents("li").data("source");
+                var target = $(this).parents("li").data("target");
+                var repl = $.grep(replications, function(obj) {
+                  return !(obj.source === source && obj.target === target);
+                });
+                localData.set("replications", repl);
+                window.location.reload(true);
+              });
+              $(".cancel", tpl).bind('mousedown', function() {
+
+                var parent = ($(this).parents("li"))
+                  , obj = { source: ($(this).parents("li").data("source"))
+                          , target: ($(this).parents("li").data("target"))
+                          , cancel: true };
+
+
+                if (parent.data("continuous") === true) {
+                  obj.continuous = true;
+                }
+                if (parent.data("create_target") === true) {
+                  obj.create_target = true;
+                }
+
+                $.couch.replicate(obj.source, obj.target, {}, obj).done(function() {
+                  window.location.reload(true);
+                });
+              });
+            });
           });
-          localData.set("replications", repl);
-          window.location.reload(true);
-        });
-        $("#clear", tpl).bind('mousedown', function() {
-          window.location.reload();
-        });
-      });
-    });
+  };
+
+  router.get("#/replication/", function () {
+    //dont automatically update forms people are filling in
+    //activeTasks = setInterval(showReplications, 5000);
+    showReplications(true);
+  }).unload(function() {
+    clearInterval(activeTasks);
   });
 
   router.get("#/config/", function () {
@@ -201,41 +256,46 @@ var MobileFuton = (function () {
     });
   });
 
+  var showActiveTasks = function(transition) {
+
+    var opts = (transition !== true) ? {notransition:true} : {};
+
+    var cancel = function(data) {
+      clearInterval(activeTasks);
+      activeTasks = null;
+      renderer.render("unauthorized_tpl");
+    };
+
+    $.couch.activeTasks({error:cancel}).then(function(data) {
+      renderer.render("tasks_tpl", {tasks:data}, opts);
+    });
+  };
+
   router.get("#/tasks/", function () {
     $("#title").text("Active Tasks");
-    var slidein = false;
-    var showActiveTasks = function() {
-      $.couch.activeTasks({error:function(data) {
-        clearInterval(activeTasks);
-        activeTasks = null;
-        renderer.render("unauthorized_tpl");
-      }}).then(function(data) {
-        renderer.render("tasks_tpl", {tasks:data}, {notransition:slidein});
-        slidein = true;
-      });
-    };
     activeTasks = setInterval(showActiveTasks, 5000);
-    showActiveTasks();
+    showActiveTasks(true);
   }).unload(function() {
     clearInterval(activeTasks);
-    activeTasks = null;
   });
 
 
   router.post("/replication/", function (e, form) {
+
     if (!replicationExists(form)) {
       replications.push(form);
       localData.set("replications", replications);
     }
-    var reOpts = {create_target:true};
-    if (form.continous == "on") {
-      reOpts.continous = true;
-    }
-    $.couch.replicate(form.source, form.target, {}, reOpts).done(function() {
-      alert("Replication Successful");
-    }).fail(function() {
-      alert("Replication Failed");
+
+    var obj = { source:form.source
+              , target:form.target
+              , create_target:true
+              , continuous: (form.continuous === "on") };
+
+    $.couch.replicate(form.source, form.target, {error:nil}, obj).done(function() {
+      window.location.reload(true);
     });
+
   });
 
   router.post("#/config/", function (e, form) {
