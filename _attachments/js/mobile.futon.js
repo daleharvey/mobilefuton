@@ -31,6 +31,7 @@ var localData = (function(){
 
 var MobileFuton = (function () {
 
+
   var mainDb        = location.pathname.split("/")[1]
     , activeTasks   = null
     , router        = new Router()
@@ -38,16 +39,19 @@ var MobileFuton = (function () {
     , docs          = {}
     , replications  = localData.get("replications", []);
 
+
   router.get(/^(#)?$/, function () {
     setTitle("CouchDB");
     getN([$.couch.session(), $.couch.info()]).then(function(data, inf) {
-      var tpldata = { ip: router.params.ip || document.location.hostname
-                    , port: document.location.port || 80
-                    , version: (inf[0].version)
-                    , adminparty: (data[0].userCtx.roles.indexOf("_admin") != -1) }
+      var tpldata =
+          { ip: router.params.ip || location.hostname
+          , port: location.port || 80
+          , version: (inf[0].version)
+          , adminparty: (data[0].userCtx.roles.indexOf("_admin") != -1) }
       renderer.render("home_tpl", tpldata);
     });
   });
+
 
   router.get("#/couchapps/", function () {
 
@@ -73,9 +77,7 @@ var MobileFuton = (function () {
         }
       }
 
-      $.ajax({ type:"HEAD"
-             , url:url
-             , complete: complete});
+      $.ajax({type:"HEAD", url:url, complete: complete});
     }
 
     $.couch.allDbs({
@@ -87,19 +89,19 @@ var MobileFuton = (function () {
               designDocs.push({database:data[id], ddoc:ddoc.id});
             });
           });
-
           $.map(designDocs, function(ddoc) {
             isCouchApp(ddoc, designDocs.length);
           });
-
         });
       }
     });
   });
 
+
   router.get("#/databases/:database/", function (database) {
     router.forward("#/databases/" + database + "/views/_all_docs");
   });
+
 
   router.get("#/databases/:database/views/*view", function (database, view) {
     database = decodeURIComponent(database);
@@ -122,8 +124,7 @@ var MobileFuton = (function () {
         renderer.render("database_tpl", data, {}, function(tpl) {
           $("#views_select option[value=" + view + "]", tpl).attr("selected", "selected");
           $("#views_select", tpl).bind("change", function() {
-            document.location.href = "#/databases/" + database + "/views/" +
-              $(this).val();
+            location.href = "#/databases/" + database + "/views/" + $(this).val();
           });
         });
       };
@@ -139,6 +140,7 @@ var MobileFuton = (function () {
     });
   });
 
+
   router.get("#/databases/:database/*doc", function (database, doc) {
     database = decodeURIComponent(database);
     $.couch.db(database).openDoc(doc).then(function(json) {
@@ -146,6 +148,7 @@ var MobileFuton = (function () {
       renderer.render("document_tpl", {json:JSON.stringify(json, null, " ")});
     });
   });
+
 
   router.get("#/databases/", function () {
     $.couch.allDbs().then(function(data) {
@@ -157,6 +160,7 @@ var MobileFuton = (function () {
     });
   });
 
+
   router.get("#/replication/", function () {
     setTitle("Replication");
     $.couch.allDbs({}).then(function(data) {
@@ -166,9 +170,8 @@ var MobileFuton = (function () {
       }, {}, function(tpl) { setupReplicationEvents(tpl); updateReplications(); });
     });
     activeTasks = setInterval(updateReplications, 5000);
-  }).unload(function() {
-    clearInterval(activeTasks);
-  });
+  }).unload(function() { clearInterval(activeTasks); });
+
 
   router.get("#/config/", function () {
     setTitle("Config");
@@ -189,27 +192,12 @@ var MobileFuton = (function () {
     });
   });
 
-  var showActiveTasks = function(transition) {
-
-    var opts = (transition !== true) ? {notransition:true} : {};
-
-    var cancel = function(data) {
-      clearInterval(activeTasks);
-      renderer.render("unauthorized_tpl");
-    };
-
-    $.couch.activeTasks({error:cancel}).then(function(data) {
-      renderer.render("tasks_tpl", {tasks:data}, opts);
-    });
-  };
 
   router.get("#/tasks/", function () {
     setTitle("Active Tasks");
     activeTasks = setInterval(showActiveTasks, 5000);
     showActiveTasks(true);
-  }).unload(function() {
-    clearInterval(activeTasks);
-  });
+  }).unload(function() { clearInterval(activeTasks); });
 
 
   router.post("/replication/", function (e, form) {
@@ -228,7 +216,9 @@ var MobileFuton = (function () {
            .then(updateReplications);
   });
 
+
   router.post("#/config/", function (e, form) {
+
     $("#saveconfig").val("Saving ...");
 
     function setConfig(obj) {
@@ -240,11 +230,9 @@ var MobileFuton = (function () {
       $.each(form, function(name) {
         var tmp = name.split(":");
         if (data[tmp[0]][tmp[1]] != form[name]) {
-          changes.push({
-            section: tmp[0],
-            key: tmp[1],
-            value: form[name]
-          });
+          changes.push({ section: tmp[0]
+                       , key: tmp[1]
+                       , value: form[name] });
         }
       });
 
@@ -253,6 +241,22 @@ var MobileFuton = (function () {
       });
     });
   });
+
+
+  var showActiveTasks = function(transition) {
+
+    var opts = (transition !== true) ? {notransition:true} : {};
+
+    var cancel = function(data) {
+      clearInterval(activeTasks);
+      renderer.render("unauthorized_tpl");
+    };
+
+    $.couch.activeTasks({error:cancel}).then(function(data) {
+      renderer.render("tasks_tpl", {tasks:data}, opts);
+    });
+  };
+
 
   function setupReplicationEvents(tpl) {
 
@@ -284,10 +288,11 @@ var MobileFuton = (function () {
           return !(obj.source === source && obj.target === target);
         });
       localData.set("replications", repl);
-      window.location.reload(true);
+      location.reload(true);
     });
 
   }
+
 
   function replicationExists(data) {
     for(var i = 0; i < replications.length; i++) {
@@ -298,6 +303,7 @@ var MobileFuton = (function () {
     }
     return false;
   }
+
 
   var parseReplicationTask = function(task) {
 
@@ -317,13 +323,16 @@ var MobileFuton = (function () {
     return obj;
   };
 
+
   var getN = function(arr) {
     return $.when.apply(this, arr);
   };
 
+
   var setTitle = function(text) {
     $("#title, title").text(text);
   };
+
 
   var updateReplications = function() {
 
@@ -360,6 +369,7 @@ var MobileFuton = (function () {
       $rows.insertAfter($("#running li.header"));
     });
   };
+
 
   router.init();
 
