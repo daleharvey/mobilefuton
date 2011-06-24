@@ -117,17 +117,6 @@
 
       <ul id="running">
         <li class="header">Running Replications</li>
-        {{#running}}
-        <li data-source="{{source}}" data-target="{{target}}"
-            data-continuous="{{continuous}}" data-create_target="{{create_target}}"
-            class="repl">
-          <a class="replication">{{{source}} -> {{target}}</a>
-          <button class="cancel">cancel</button>
-        </li>
-        {{/running}}
-        {{^running}}
-        <li class="none">No Running Replications</li>
-        {{/running}}
       </ul>
 
       <form action="#/replication/">
@@ -176,6 +165,21 @@
         <li class="none">No Stored Replications</li>
         {{/replications}}
       </ul>
+
+    </script>
+
+    <script type="text/html" id="replication_items">
+      {{#running}}
+      <li data-source="{{source}}" data-target="{{target}}"
+          data-continuous="{{continuous}}" data-create_target="{{create_target}}"
+          class="repl">
+        <a class="replication">{{{source}} -> {{target}}</a>
+        <button class="cancel">cancel</button>
+      </li>
+      {{/running}}
+      {{^running}}
+      <li class="none">No Running Replications</li>
+      {{/running}}
 
     </script>
 

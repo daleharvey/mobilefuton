@@ -99,11 +99,13 @@ var Router = (function() {
         args.unshift(data);
         args.unshift(ctx);
       }
-      if (lastPage && lastPage.unload) {
+      if (lastPage && lastPage.unload && verb === "GET") {
         lastPage.unload.apply(this, args);
       }
       match.details.load.apply(this, args);
-      lastPage = match.details;
+      if (verb === "GET") {
+        lastPage = match.details;
+      }
     } else {
       if (fun404) {
         fun404(verb, url);
