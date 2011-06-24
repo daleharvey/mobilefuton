@@ -184,8 +184,8 @@ var MobileFuton = (function () {
         html += "<ul><li class='header'>" + id + "</li>";
         $.each(data[id], function(opts) {
           html += "<li><label>" + opts +
-            "<input type='text' name='" + id + ":" + opts +
-            "' value='"+data[id][opts]+"' /></label></li>";
+            "<br /><div class='inputwrap'><input type='text' name='" + id + ":" +
+            opts + "' value='"+data[id][opts]+"' /></div></label></li>";
         });
         html += "</ul>";
       });

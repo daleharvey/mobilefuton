@@ -301,16 +301,10 @@ li input[type=text] {
     border: 1px solid #CCCCCC;
     display: block;
     font: bold 1em Helvetica,Arial,sans-serif;
-    margin: 10px;
+    margin: 10px 0px;
     padding: 4px;
-    width:auto;
 }
 
-#config input[type=text] {
-    position:absolute;
-    right:0px;
-    top:-15px;
-}
 #config label {
     position:relative;
 }
