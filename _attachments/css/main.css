@@ -236,10 +236,11 @@ li {
     color: #2F3E46;
     text-shadow: 1px 1px 1px #FFF;
     letter-spacing:1.1px;
+}
+li a {
     cursor:pointer;
 }
-
-li:hover {
+li a:hover {
     background: -moz-linear-gradient(center top , #EDEDED, #DADADA) repeat scroll 0 0 #DADADA;
     background: -webkit-gradient(linear, 0% 40%, 0% 70%, from(#EDEDED), to(#DADADA));
 }
