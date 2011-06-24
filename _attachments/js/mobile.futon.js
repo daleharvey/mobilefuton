@@ -21,7 +21,8 @@ var localData = (function(){
       localStorage.setItem(prop, JSON.stringify(val));
     },
     get:function(prop, def){
-      return JSON.parse(localStorage.getItem(prop)) || def;
+      var obj = localStorage.getItem(prop) || "false";
+      return JSON.parse(obj) || def;
     },
     remove:function(prop){
       localStorage.removeItem(prop);
@@ -184,7 +185,7 @@ var MobileFuton = (function () {
         $.each(data[id], function(opts) {
           html += "<li><label>" + opts +
             "<input type='text' name='" + id + ":" + opts +
-            "' value='"+data[id][opts]+"' /></li>";
+            "' value='"+data[id][opts]+"' /></label></li>";
         });
         html += "</ul>";
       });
