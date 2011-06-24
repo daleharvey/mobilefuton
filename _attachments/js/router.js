@@ -71,7 +71,7 @@ var Router = (function() {
 
   function urlChanged(maintainScroll) {
     history.push(window.location.hash);
-    trigger("GET", "#" + document.location.href.split("#")[1]);
+    trigger("GET", "#" + (document.location.href.split("#")[1] || ""));
     if (maintainScroll !== true) {
       //window.scrollTo(0,0);
     }
