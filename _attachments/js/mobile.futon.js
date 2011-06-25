@@ -1,3 +1,6 @@
+
+
+// http://paulirish.com/2009/log-a-lightweight-wrapper-for-consolelog/
 window.log = function(){
   log.history = log.history || [];
   log.history.push(arguments);
@@ -6,32 +9,36 @@ window.log = function(){
   }
 };
 
+
 $.ajaxSetup({
   cache: false
 });
 
 
+// jquery.couch.js needs some callbacks nullified to prevent defaults
 var nil = function() {};
 
 
+// Basic wrapper for localStorage
 var localData = (function(){
-  if (typeof(localStorage) == 'undefined' ) {
+  if (!localStorage) {
     return false;
   }
   return {
-    set:function(prop, val){
+    set:function(prop, val) {
       localStorage.setItem(prop, JSON.stringify(val));
     },
-    get:function(prop, def){
+    get:function(prop, def) {
       return JSON.parse(localStorage.getItem(prop) || 'false') || def;
     },
-    remove:function(prop){
+    remove:function(prop) {
       localStorage.removeItem(prop);
     }
   };
 })();
 
 
+// http://yehudakatz.com/2009/04/20/evented-programming-with-jquery/
 function $$(node) {
   var data = $(node).data("$$");
   if (data) {
@@ -45,7 +52,6 @@ function $$(node) {
 
 
 var MobileFuton = (function () {
-
 
   var mainDb = location.pathname.split("/")[1]
     , interval = null
@@ -472,6 +478,5 @@ var MobileFuton = (function () {
   updateSession(function() {
     router.init(window);
   });
-
 
 })();
