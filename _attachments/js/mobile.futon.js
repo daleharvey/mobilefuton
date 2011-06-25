@@ -133,9 +133,10 @@ var MobileFuton = (function () {
       , views = []
       , id = null;
 
-    setTitle(dbname + '/' + viewname);
+    setTitle(viewname);
 
     $.couch.db(dbname).allDesignDocs({include_docs:true}).then(function(ddocs) {
+
       $.each(ddocs.rows, function(ddoc) {
         id = ddocs.rows[ddoc].doc._id;
         $.each(ddocs.rows[ddoc].doc.views || [], function(v) {
