@@ -16,8 +16,8 @@ var Router = (function() {
   });
 
   // Needs namespaced and decoupled and stuff
-  function init() {
-    $(window).bind("hashchange", urlChanged).trigger("hashchange");
+  function init(parent) {
+    $(parent).bind("hashchange", urlChanged).trigger("hashchange");
     $(document).bind("submit", formSubmitted);
   }
 

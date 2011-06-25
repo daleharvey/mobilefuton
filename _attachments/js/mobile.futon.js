@@ -31,6 +31,7 @@ var localData = (function(){
 
 var MobileFuton = (function () {
 
+
   var mainDb = location.pathname.split("/")[1]
     , interval = null
     , router = Router()
@@ -252,6 +253,7 @@ var MobileFuton = (function () {
     });
   });
 
+
   var getN = function(arr) {
     return $.when.apply(this, arr);
   };
@@ -373,6 +375,9 @@ var MobileFuton = (function () {
     return Mustache.to_html($(tpl).html(), data);
   }
 
-  router.init();
+  router.init(window);
+
+
+
 
 })();
