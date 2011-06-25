@@ -407,7 +407,9 @@ var MobileFuton = (function () {
 
       for(var replTasks = [], i = 0; i < tasks.length; i++) {
         if (tasks[i].type === 'Replication') {
-          replTasks.push(parseReplicationTask(tasks[i].task));
+          var tmp = parseReplicationTask(tasks[i].task);
+          tmp.cancellable = !(/\*/.test(tmp.source + tmp.target));
+          replTasks.push(tmp);
         }
       }
 

@@ -176,7 +176,9 @@
           data-continuous="{{continuous}}" data-create_target="{{create_target}}"
           class="repl">
         <a class="replication">{{{source}} -> {{target}}</a>
+        {{#cancellable}}
         <button class="cancel">cancel</button>
+        {{/cancellable}}
       </li>
       {{/running}}
       {{^running}}
