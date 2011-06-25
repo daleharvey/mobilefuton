@@ -235,6 +235,7 @@ var MobileFuton = (function () {
 
   router.get('#/account/', function () {
     var user = $$("#user").user;
+    user.roles = user.roles.toString();
     if (user.name) {
       renderer.render('logged_in', user);
     } else {

@@ -218,6 +218,11 @@
 
     <script type="text/html" id="logged_in">
       <form action="#logout">
+        <ul>
+          <li class="header">User Information</li>
+          <li><div class="selectwrapper">name: {{name}}</div></li>
+          <li><div class="selectwrapper">roles: {{roles}}</div></li>
+        </ul>
         <div class="selectwrapper">
           <input type="submit" value="logout" />
         </div>
