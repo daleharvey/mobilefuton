@@ -33,8 +33,8 @@ var MobileFuton = (function () {
 
   var mainDb = location.pathname.split("/")[1]
     , interval = null
-    , router = new Router()
-    , renderer = new Renderer()
+    , router = Router()
+    , renderer = Renderer()
     , docs = {}
     , replications = localData.get('replications', [])
     , clearRefresh = function() { clearInterval(interval); };
