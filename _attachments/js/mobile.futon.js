@@ -36,7 +36,8 @@ var MobileFuton = (function () {
     , router = new Router()
     , renderer = new Renderer()
     , docs = {}
-    , replications = localData.get('replications', []);
+    , replications = localData.get('replications', [])
+    , clearRefresh = function() { clearInterval(interval); };
 
 
   router.get(/^(#)?$/, function () {
@@ -104,23 +105,26 @@ var MobileFuton = (function () {
 
 
   router.get('#/databases/:database/views/*view', function (database, view) {
-    database = decodeURIComponent(database);
-    var viewname = view.replace('-', '/');
-    setTitle(database + '/' + viewname);
-    $.couch.db(database).allDesignDocs({include_docs:true}).then(function(ddocs) {
-      var views = [];
+
+    var dbname = decodeURIComponent(database)
+      , viewname = view.replace('-', '/')
+      , views = []
+      , id = null;
+
+    setTitle(dbname + '/' + viewname);
+
+    $.couch.db(dbname).allDesignDocs({include_docs:true}).then(function(ddocs) {
       $.each(ddocs.rows, function(ddoc) {
-        var id = ddocs.rows[ddoc].doc._id;
+        id = ddocs.rows[ddoc].doc._id;
         $.each(ddocs.rows[ddoc].doc.views || [], function(v) {
           views.push({id:id, ddoc:id.replace('_design/', ''), name:v});
         });
       });
 
       var callback = function(data) {
-        data.database = database;
-        data.start = 1;
-        data.end = data.total_rows;
-        data.views = views;
+        data = $.extend(data, { database: dbname, start: 1
+                              , end: data.total_rows, views: views});
+
         renderer.render('database_tpl', data, {}, function(tpl) {
           $('#views_select', tpl).val(view).bind('change', function() {
             location.href = '#/databases/' + database + '/views/' + $(this).val();
@@ -169,7 +173,7 @@ var MobileFuton = (function () {
       }, {}, function(tpl) { setupReplicationEvents(tpl); updateReplications(); });
     });
     interval = setInterval(updateReplications, 5000);
-  }).unload(function() { clearInterval(interval); });
+  }).unload(clearRefresh);
 
 
   router.get('#/config/', function () {
@@ -203,7 +207,7 @@ var MobileFuton = (function () {
       renderer.render('tasks_tpl', {tasks: data});
     });
     interval = setInterval(updateActiveTasks, 5000);
-  }).unload(function() { clearInterval(interval); });
+  }).unload(clearRefresh);
 
 
   router.post('/replication/', function (e, form) {
@@ -213,8 +217,8 @@ var MobileFuton = (function () {
       localData.set('replications', replications);
     }
 
-    var obj = { source: form.source
-              , target: form.target
+    var obj = { source: form.custom_source || form.source
+              , target: form.custom_target || form.target
               , create_target: true
               , continuous: (form.continuous === 'on') };
 
@@ -248,6 +252,21 @@ var MobileFuton = (function () {
     });
   });
 
+  var getN = function(arr) {
+    return $.when.apply(this, arr);
+  };
+
+
+  var setTitle = function(text) {
+    $('#title, title').text(text);
+  };
+
+
+  var unauth = function() {
+    clearRefresh();
+    renderer.render('unauthorized_tpl');
+  };
+
 
   var updateActiveTasks = function(transition) {
 
@@ -260,45 +279,28 @@ var MobileFuton = (function () {
 
   function setupReplicationEvents(tpl) {
 
-    $('#source_select, #target_select', tpl).bind('change', function(e) {
-      var tmp = $(e.target);
-      if (tmp.val() === 'manual') {
-        tmp.replaceWith('<input type="text" name="' + tmp.attr('name')+'" />');
-      }
-    });
-
-    $('#stored', tpl).bind('mousedown', function(e) {
-      if ($(e.target).is('.replication')) {
-        var $obj = $(e.target).parent('li');
-        $('[name=source]', tpl).replaceWith('<input type="text" name="source" value="'+$obj.attr("data-source")+'" />');
-        $('[name=target]', tpl).replaceWith('<input type="text" name="target" value="'+$obj.attr("data-target")+'" />');
-        if ($obj.attr('data-continous') === 'on') {
-          $('#continous', tpl).attr('checked', 'checked');
-        } else {
-          $('#continous', tpl).removeAttr('checked');
-        }
+    $('.replication', tpl).bind('mousedown', function(e) {
+      var $obj = $(e.target).parent('li');
+      $('#custom_source', tpl).val($obj.attr("data-source"));
+      $('#custom_target', tpl).val($obj.attr("data-target"));
+      if ($obj.attr('data-continous') === 'on') {
+        $('#continous', tpl).attr('checked', 'checked');
+      } else {
+        $('#continous', tpl).removeAttr('checked');
       }
     });
 
     $('.delete', tpl).bind('mousedown', function() {
-      var source = ($(this).parents('li').data('source'))
-        , target = ($(this).parents('li').data('target'))
+      var parent = ($(this).parents('li'))
+        , source = parent.data('source')
+        , target = parent.data('target')
         , repl = $.grep(replications, function(obj) {
           return !(obj.source === source && obj.target === target);
         });
       localData.set('replications', repl);
       location.reload(true);
     });
-
   }
-
-
-  var unauth = function() {
-    if (interval) {
-      clearInterval(interval);
-    }
-    renderer.render('unauthorized_tpl');
-  };
 
 
   function replicationExists(data) {
@@ -328,16 +330,6 @@ var MobileFuton = (function () {
     }
 
     return obj;
-  };
-
-
-  var getN = function(arr) {
-    return $.when.apply(this, arr);
-  };
-
-
-  var setTitle = function(text) {
-    $('#title, title').text(text);
   };
 
 

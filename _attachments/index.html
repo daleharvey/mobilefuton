@@ -129,8 +129,9 @@
                 {{#databases}}
                 <option value="{{.}}">{{.}}</option>
                 {{/databases}}
-                <option value="manual">Remote Database</option>
               </select>
+              <input type="text" name="custom_source" id="custom_source"
+                     placeholder="or enter a url" />
             </div>
             <div class="selectwrapper">
               To:
@@ -138,8 +139,9 @@
                 {{#databases}}
                 <option value="{{.}}">{{.}}</option>
                 {{/databases}}
-                <option value="manual">Remote Database</option>
               </select>
+              <input type="text" name="custom_target" id="custom_target"
+                     placeholder="or enter a url"  />
             </div>
 
             <label for="continuous">

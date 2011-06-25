@@ -431,3 +431,7 @@ li:last-child .delete {
 .repl {
     position:relative;
 }
+
+.selectwrapper select {
+    margin-bottom:10px;
+}
