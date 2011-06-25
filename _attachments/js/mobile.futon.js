@@ -48,7 +48,6 @@ var MobileFuton = (function () {
 
 
   var mainDb = location.pathname.split("/")[1]
-    , user = null
     , interval = null
     , router = Router()
     , renderer = Renderer()
