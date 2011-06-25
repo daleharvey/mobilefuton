@@ -258,7 +258,9 @@ var MobileFuton = (function () {
       );
     };
 
-    if (form.register) {
+    if (form.register && isAdminParty()) {
+      $.couch.config({success: login}, "admins", form.username, form.password);
+    } else if (form.register) {
       $.couch.signup({name:form.username}, form.password, {success: login});
     } else {
       login();
