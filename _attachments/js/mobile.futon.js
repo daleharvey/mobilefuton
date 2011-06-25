@@ -270,11 +270,6 @@ var MobileFuton = (function () {
 
   router.post('#replication', function (e, form) {
 
-    if (!replicationExists(form)) {
-      replications.push(form);
-      localData.set('replications', replications);
-    }
-
     var obj = { source: form.custom_source || form.source
               , target: form.custom_target || form.target
               , create_target: true
@@ -282,6 +277,14 @@ var MobileFuton = (function () {
 
     $.couch.replicate(form.source, form.target, {error:nil}, obj)
            .then(updateReplications);
+
+    replications = $.grep(replications, function(repl) {
+      return !(repl.source === obj.source && repl.target === obj.target);
+    });
+    replications.push(obj);
+    localData.set('replications', replications);
+
+
   });
 
 
@@ -342,10 +345,10 @@ var MobileFuton = (function () {
       var $obj = $(e.target).parent('li');
       $('#custom_source', tpl).val($obj.attr("data-source"));
       $('#custom_target', tpl).val($obj.attr("data-target"));
-      if ($obj.attr('data-continous') === 'on') {
-        $('#continous', tpl).attr('checked', 'checked');
+      if ($obj.data('continuous')) {
+        $('#continuous', tpl).attr('checked', 'checked');
       } else {
-        $('#continous', tpl).removeAttr('checked');
+        $('#continuous', tpl).removeAttr('checked');
       }
     });
 
