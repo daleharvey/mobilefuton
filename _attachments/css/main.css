@@ -275,7 +275,7 @@ li a {
     color:white;
 }
 
-footer a {
+.plain_btn {
     position:absolute;
 }
 footer h1 {
@@ -296,7 +296,7 @@ li.header {
     text-shadow: 0 -1px 1px #254F7A;
 }
 
-li input[type=text] {
+li input[type=text], li input[type=password] {
     -moz-box-sizing: border-box;
     border: 1px solid #CCCCCC;
     display: block;
@@ -435,3 +435,5 @@ li:last-child .delete {
 .selectwrapper select {
     margin-bottom:10px;
 }
+
+#user { color:white; position:absolute; right:0px; top:0px; }

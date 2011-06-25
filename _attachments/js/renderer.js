@@ -10,6 +10,7 @@ var Renderer = (function() {
   });
   $(window).resize();
 
+
   function transformY(dom, x) {
     if (Modernizr.csstransforms3d) {
       dom.css("-moz-transform", "translate3d(0, " + x + "px, 0)")

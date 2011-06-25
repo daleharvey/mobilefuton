@@ -87,7 +87,7 @@ var Router = (function() {
     var action = e.target.getAttribute("action");
 
     if (action[0] === "#") {
-      trigger("POST", action.slice(1), e, serialize(e.target));
+      trigger("POST", action, e, serialize(e.target));
     }
   }
 
@@ -144,15 +144,19 @@ var Router = (function() {
     return o;
   }
 
-  return {
-    forward : forward,
-    back    : back,
-    get     : get,
-    post    : post,
-    init    : init,
-    matchesCurrent : matchesCurrent,
-    error404 : error404,
-    params : params
-  };
+  function previous() {
+
+    return history.length > 1 ? history[history.length - 2]: false;
+  }
+
+  return { previous : previous
+         , forward : forward
+         , back    : back
+         , get     : get
+         , post    : post
+         , init    : init
+         , matchesCurrent : matchesCurrent
+         , error404 : error404
+         , params : params };
 
 });

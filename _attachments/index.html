@@ -15,6 +15,7 @@
     <footer>
       <a href="#" class="home plain_btn"><img src="./img/favicon.png" /></a>
       <h1 id="title">CouchDB</h1>
+      <div id="user" class="plain_btn">test</div>
     </footer>
 
     <div id="content"></div>
@@ -34,14 +35,13 @@
 
       {{#adminparty}}
       <p class="adminparty">
-        You are currently in Admin Party! register an admin to turn if off.
-      </p>
-      {{/adminparty}}
+        You are currently in Admin Party!
+      </p>{{/adminparty}}
 
     </script>
 
     <script type="text/html" id="config_tpl">
-      <form action="#/config/" id="config">
+      <form action="#config" id="config">
         {{{config}}}
         <div style="padding:10px;">
           <input type="submit" value="Save Config" id="saveconfig" />
@@ -119,7 +119,7 @@
         <li class="header">Running Replications</li>
       </ul>
 
-      <form action="#/replication/">
+      <form action="#replication">
         <ul>
           <li class="header">Create Replication</li>
           <li>
@@ -159,7 +159,7 @@
         {{#replications}}
         <li data-source="{{source}}" data-target="{{target}}"
             data-continous="{{continous}}" class="repl">
-          <a class="replication">{{source}} => {{target}}</a>
+          <a class="replication">{{source}} =&gt; {{target}}</a>
           <button class="delete">delete</button>
         </li>
         {{/replications}}
@@ -185,8 +185,48 @@
 
     </script>
 
+    <script type="text/html" id="logged_out_btn">
+      <a href="#/account/">login</a>
+    </script>
+
+    <script type="text/html" id="logged_in_btn">
+      <a href="#/account/">{{name}}</a>
+    </script>
+
+    <script type="text/html" id="logged_out">
+      <ul>
+        <li>
+          <form action="#login">
+            <div class="selectwrapper">
+              <input type="text" id="username" name="username"
+                     placeholder="username" />
+            </div>
+            <div class="selectwrapper">
+              <input type="password" id="password" name="password"
+                     placeholder="password" />
+            </div>
+            <label for="register">
+              <input type="checkbox" id="register" name="register" /> Register
+            </label>
+            <div class="selectwrapper">
+              <input type="submit" value="Submit" />
+            </div>
+          </form>
+          </li>
+      </ul>
+    </script>
+
+    <script type="text/html" id="logged_in">
+      <form action="#logout">
+        <div class="selectwrapper">
+          <input type="submit" value="logout" />
+        </div>
+      </form>
+    </script>
+
   </body>
 
+  <script src="/_utils/script/sha1.js"></script>
   <script src="./jquery-1.6.min.js"></script>
   <script src="./js/jquery.couch.js"></script>
   <script src="./js/modernizr-1.7.min.js"></script>

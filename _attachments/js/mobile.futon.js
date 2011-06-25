@@ -10,7 +10,9 @@ $.ajaxSetup({
   cache: false
 });
 
+
 var nil = function() {};
+
 
 var localData = (function(){
   if (typeof(localStorage) == 'undefined' ) {
@@ -29,10 +31,24 @@ var localData = (function(){
   };
 })();
 
+
+function $$(node) {
+  var data = $(node).data("$$");
+  if (data) {
+    return data;
+  } else {
+    data = {};
+    $(node).data("$$", data);
+    return data;
+  }
+};
+
+
 var MobileFuton = (function () {
 
 
   var mainDb = location.pathname.split("/")[1]
+    , user = null
     , interval = null
     , router = Router()
     , renderer = Renderer()
@@ -43,12 +59,12 @@ var MobileFuton = (function () {
 
   router.get(/^(#)?$/, function () {
     setTitle('CouchDB');
-    getN([$.couch.session(), $.couch.info()]).then(function(data, inf) {
+    $.couch.info().then(function(info) {
       var tpldata =
           { ip: router.params.ip || location.hostname
           , port: location.port || 80
-          , version: (inf[0].version)
-          , adminparty: (data[0].userCtx.roles.indexOf('_admin') != -1) }
+          , version: (info.version)
+          , adminparty: isAdminParty() }
       renderer.render('home_tpl', tpldata);
     });
   });
@@ -123,8 +139,11 @@ var MobileFuton = (function () {
       });
 
       var callback = function(data) {
-        data = $.extend(data, { database: dbname, start: 1
-                              , end: data.total_rows, views: views});
+
+        data = $.extend(data, { database: dbname
+                              , start: 1
+                              , end: data.total_rows
+                              , views: views});
 
         renderer.render('database_tpl', data, {}, function(tpl) {
           $('#views_select', tpl).val(view).bind('change', function() {
@@ -155,8 +174,8 @@ var MobileFuton = (function () {
 
 
   router.get('#/databases/', function () {
+    setTitle('Databases');
     $.couch.allDbs().then(function(data) {
-      setTitle('Databases');
       data = $.map(data, function(url) {
         return {url:encodeURIComponent(url), name:url};
       });
@@ -184,7 +203,7 @@ var MobileFuton = (function () {
     var html = ''
       , header = '<ul><li class="header">{{id}}</li>'
       , item = '<li><label>{{name}}<br /><div class="inputwrap">' +
-      '<input type="text" name="{{id}}:{{name}}" value="{{value}}" />' +
+      '<input type="text" name=\'{{id}}:{{{name}}}\' value=\'{{{value}}}\' />' +
       '</div></label></li>'
 
     $.couch.config({error:unauth}).then(function(data) {
@@ -201,9 +220,7 @@ var MobileFuton = (function () {
 
 
   router.get('#/tasks/', function () {
-
     setTitle('Active Tasks');
-
     $.couch.activeTasks({error: unauth}).then(function(data) {
       renderer.render('tasks_tpl', {tasks: data});
     });
@@ -211,7 +228,39 @@ var MobileFuton = (function () {
   }).unload(clearRefresh);
 
 
-  router.post('/replication/', function (e, form) {
+  router.get('#/account/', function () {
+    var user = $$("#user").user;
+    if (user.name) {
+      renderer.render('logged_in', user);
+    } else {
+      renderer.render('logged_out');
+    }
+  });
+
+
+  router.post('#logout', function (e, form) {
+    $.couch.logout().then(refreshSession);
+  });
+
+
+  router.post('#login', function (e, form) {
+
+    var login = function() {
+      $.couch.login(
+        { name: form.username
+        , password: form.password
+        , success: refreshSession }
+      );
+    };
+
+    if (form.register) {
+      $.couch.signup({name:form.username}, form.password, {success: login});
+    } else {
+      login();
+    }
+  });
+
+  router.post('#replication', function (e, form) {
 
     if (!replicationExists(form)) {
       replications.push(form);
@@ -228,7 +277,7 @@ var MobileFuton = (function () {
   });
 
 
-  router.post('#/config/', function (e, form) {
+  router.post('#config', function (e, form) {
 
     $('#saveconfig').val('Saving ...');
 
@@ -375,9 +424,48 @@ var MobileFuton = (function () {
     return Mustache.to_html($(tpl).html(), data);
   }
 
-  router.init(window);
+
+  var renderTo = function(dom, tpl, data) {
+    $(dom).empty().append(render(tpl, data));
+  }
 
 
+  var refreshSession = function() {
+    updateSession(function() {
+      location.href = router.previous() || "#";
+    });
+  }
+
+
+  var updateSession = function(callback) {
+    $.couch.session().then(function(data) {
+      $$("#user").user = data.userCtx;
+      renderLogin();
+      if (callback) {
+        callback();
+      }
+    });
+  }
+
+  var renderLogin = function() {
+    var user = $$("#user").user;
+    if (user.name) {
+      renderTo("#user", "#logged_in_btn", user);
+    } else {
+      renderTo("#user", "#logged_out_btn");
+    }
+  }
+
+
+  var isAdminParty = function() {
+    return !$$("#user").user.name &&
+      $$("#user").user.roles.indexOf('_admin') != -1;
+  }
+
+
+  updateSession(function() {
+    router.init(window);
+  });
 
 
 })();
