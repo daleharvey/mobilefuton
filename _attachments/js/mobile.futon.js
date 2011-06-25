@@ -386,7 +386,13 @@ var MobileFuton = (function () {
 
   var updateReplications = function() {
 
-    $.couch.activeTasks({}).then(function(tasks) {
+    var err = function() {
+      $('#running li:not(.header)').remove();
+      $("#running").append('<li class="none">You need to be an admin to ' +
+                           'read current tasks</li>');
+    };
+
+    $.couch.activeTasks({error:err}).then(function(tasks) {
 
       for(var replTasks = [], i = 0; i < tasks.length; i++) {
         if (tasks[i].type === 'Replication') {
