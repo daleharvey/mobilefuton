@@ -48,6 +48,7 @@ var MobileFuton = (function () {
 
 
   var mainDb = location.pathname.split("/")[1]
+    , user = null
     , interval = null
     , router = Router()
     , renderer = Renderer()
@@ -467,6 +468,42 @@ var MobileFuton = (function () {
       $$("#user").user.roles.indexOf('_admin') != -1;
   }
 
+  var refreshSession = function() {
+    updateSession(function() {
+      location.href = router.previous() || "#";
+    });
+  }
+
+
+  var updateSession = function(callback) {
+    $.couch.session().then(function(data) {
+      $$("#user").user = data.userCtx;
+      renderLogin();
+      if (callback) {
+        callback();
+      }
+    });
+  }
+
+  var renderLogin = function() {
+    var user = $$("#user").user;
+    if (user.name) {
+      renderTo("#user", "#logged_in_btn", user);
+    } else {
+      renderTo("#user", "#logged_out_btn");
+    }
+  }
+
+
+  var isAdminParty = function() {
+    return !$$("#user").user.name &&
+      $$("#user").user.roles.indexOf('_admin') != -1;
+  }
+
+
+  updateSession(function() {
+    router.init(window);
+  });
 
   updateSession(function() {
     router.init(window);
