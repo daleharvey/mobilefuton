@@ -9,6 +9,11 @@ body, p {
     color:#222;
 }
 
+p {
+    text-align: center;
+    margin: 10px;
+}
+
 input {
     padding:10px;
 }
@@ -297,10 +302,7 @@ option {
     color:red;
 }
 
-.adminparty { color:#999; text-align:center; margin:20px;}
-
-.info { text-align:center; }
-.info p { margin: 8px; }
+.adminparty { color:#999; margin:20px;}
 
 .label { text-align:right; font-weight:normal; width: 70px;}
 

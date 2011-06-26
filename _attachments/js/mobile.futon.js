@@ -121,19 +121,12 @@ var MobileFuton = (function () {
   });
 
 
-  router.get('#/databases/:database/', function (database) {
-    router.forward('#/databases/' + database + '/views/_all_docs');
-  });
-
-
-  router.get('#/databases/:database/views/*view', function (database, view) {
+  router.get('#/db/:database/', function (database) {
 
     var dbname = decodeURIComponent(database)
-      , viewname = view.replace('-', '/')
-      , views = []
-      , id = null;
+      , views = [];
 
-    setTitle(viewname);
+    setTitle(dbname);
 
     $.couch.db(dbname).allDesignDocs({include_docs:true}).then(function(ddocs) {
 
@@ -144,48 +137,56 @@ var MobileFuton = (function () {
         });
       });
 
-      var callback = function(data) {
-
-        data = $.extend(data, { database: dbname
-                              , start: 1
-                              , end: data.total_rows
-                              , views: views});
-
-        renderer.render('database_tpl', data, {}, function(tpl) {
-          $('#views_select', tpl).val(view).bind('change', function() {
-            location.href = '#/databases/' + database + '/views/' + $(this).val();
-          });
-        });
-      };
-
-      if (view === '_all_docs') {
-        $.couch.db(database).allDocs({}).then(callback);
-      } else if (view === '_design_docs') {
-        $.couch.db(database).allDesignDocs({}).then(callback);
-      } else {
-        $.couch.db(database).view(viewname, {}).then(callback);
-      }
-
+      renderer.render('database_tpl', {views:views, db:database});
     });
   });
 
 
-  router.get('#/databases/:database/*doc', function (database, doc) {
-    database = decodeURIComponent(database);
-    $.couch.db(database).openDoc(doc).then(function(json) {
-      setTitle(database + '/' + doc);
+  router.get('#/db/:db/views/*view', function (db, view) {
+
+    var dbname = decodeURIComponent(db)
+      , viewname = view.replace('-', '/')
+      , id = null;
+
+    setTitle(viewname);
+
+    var callback = function(data) {
+
+      var tmp = { database: dbname
+                , start: 1
+                , end: data.total_rows
+                , rows: data.rows
+                , total:data.total_rows };
+
+      renderer.render('database_view_tpl', tmp);
+    };
+
+    if (view === '_all_docs') {
+      $.couch.db(db).allDocs({}).then(callback);
+    } else if (view === '_design_docs') {
+      $.couch.db(db).allDesignDocs({}).then(callback);
+    } else {
+      $.couch.db(db).view(viewname, {}).then(callback);
+    }
+  });
+
+
+  router.get('#/db/:db/*doc', function (db, doc) {
+    setTitle(doc);
+    db = decodeURIComponent(db);
+    $.couch.db(db).openDoc(doc).then(function(json) {
       renderer.render('document_tpl', {json:JSON.stringify(json, null, ' ')});
     });
   });
 
 
-  router.get('#/databases/', function () {
+  router.get('#/db/', function () {
     setTitle('Databases');
     $.couch.allDbs().then(function(data) {
       data = $.map(data, function(url) {
-        return {url:encodeURIComponent(url), name:url};
+        return {url:encodeURIComponent(url), name: url};
       });
-      renderer.render('databases_tpl', {databases:data});
+      renderer.render('databases_tpl', {databases: data});
     });
   });
 

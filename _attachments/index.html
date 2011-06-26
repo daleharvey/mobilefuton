@@ -20,25 +20,25 @@
 
     <div id="content"></div>
 
+
     <script type="text/html" id="home_tpl">
       <div class="info">
         <p><strong>Version:</strong><br />{{version}}</p>
         <p><strong>Current Host</strong><br />http://{{ip}}:{{port}}/</p>
       </div>
       <ul>
-        <li><a href="#/databases/" class="button">Databases</a></li>
-        <li><a href="#/replication/" class="button">Replication</a></li>
-        <li><a href="#/tasks/" class="button">Active Tasks</a></li>
-        <li><a href="#/couchapps/" class="button">CouchApps</a></li>
-        <li><a href="#/config/" class="button">Config</a></li>
+        <li><a href="#/db/">Databases</a></li>
+        <li><a href="#/replication/">Replication</a></li>
+        <li><a href="#/tasks/">Active Tasks</a></li>
+        <li><a href="#/couchapps/">CouchApps</a></li>
+        <li><a href="#/config/">Config</a></li>
       </ul>
 
       {{#adminparty}}
-      <p class="adminparty">
-        You are currently in Admin Party!
-      </p>{{/adminparty}}
-
+      <p class="adminparty">You are currently in Admin Party! </p>
+      {{/adminparty}}
     </script>
+
 
     <script type="text/html" id="config_tpl">
       <form action="#config" id="config">
@@ -48,6 +48,7 @@
         </div>
       </form>
     </script>
+
 
     <script type="text/html" id="tasks_tpl">
       <ul id="tasks">
@@ -65,6 +66,7 @@
       </ul>
     </script>
 
+
     <script type="text/html" id="couchapps_tpl">
       <ul>
         {{#couchapps}}
@@ -73,36 +75,39 @@
       </ul>
     </script>
 
-    <script type="text/html" id="document_tpl">
 
+    <script type="text/html" id="document_tpl">
       <div id="document"><pre><code>{{json}}</code></pre></div>
     </script>
 
+
     <script type="text/html" id="database_tpl">
-      <div class="selectwrapper">
-        <select name="source" id="views_select">
-          <option value="_all_docs">All Documents</option>
-          <option value="_design_docs">Design Documents</option>
-          {{#views}}
-          <option value="{{ddoc}}-{{name}}">{{id}}/{{name}}</option>
-          {{/views}}
-        </select>
-      </div>
-      <p style="text-align:center;margin:10px;">
-        {{start}} to {{end}} of {{total_rows}}
-      </p>
+      <ul>
+        <li class="header">Views</li>
+        <li><a href="#/db/{{db}}/views/_all_docs">All Documents</a></li>
+        <li><a href="#/db/{{db}}/views/_design_docs">Design Documents</a></li>
+        {{#views}}
+        <li><a href="#/db/{{db}}/views/{{ddoc}}-{{name}}">{{id}}/{{name}}</a></li>
+        {{/views}}
+      </ul>
+    </script>
+
+
+    <script type="text/html" id="database_view_tpl">
+      <p>{{start}} to {{end}} of {{total}}</p>
       <ul>
         {{#rows}}
-        <li><a href="#/databases/{{database}}/{{id}}" class="button">{{id}}</a></li>
+        <li><a href="#/db/{{database}}/{{id}}" class="button">{{id}}</a></li>
         {{/rows}}
       </ul>
     </script>
 
-    <script type="text/html" id="databases_tpl">
 
+    <script type="text/html" id="databases_tpl">
       <ul id="db_list">
+        <li class="header">Databases</li>
         {{#databases}}
-        <li><a href="#/databases/{{url}}/" class="button">{{name}}</a></li>
+        <li><a href="#/db/{{url}}/" class="button">{{name}}</a></li>
         {{/databases}}
       </ul>
     </script>
@@ -113,6 +118,7 @@
         You need to be logged in as an admin to access this page.
       </div>
     </script>
+
 
     <script type="text/html" id="replication_tpl">
 
@@ -168,8 +174,8 @@
         <li class="none">No Stored Replications</li>
         {{/replications}}
       </ul>
-
     </script>
+
 
     <script type="text/html" id="replication_items">
       {{#running}}
@@ -185,16 +191,18 @@
       {{^running}}
       <li class="none">No Running Replications</li>
       {{/running}}
-
     </script>
+
 
     <script type="text/html" id="logged_out_btn">
       <a href="#/account/">login</a>
     </script>
 
+
     <script type="text/html" id="logged_in_btn">
       <a href="#/account/">{{name}}</a>
     </script>
+
 
     <script type="text/html" id="logged_out">
       <ul>
@@ -219,6 +227,7 @@
       </ul>
     </script>
 
+
     <script type="text/html" id="logged_in">
       <form action="#logout">
         <ul>
@@ -231,6 +240,7 @@
         </div>
       </form>
     </script>
+
 
   </body>
 
