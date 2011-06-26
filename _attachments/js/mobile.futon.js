@@ -227,6 +227,7 @@ var MobileFuton = (function () {
       renderer.render('document_tpl', { db: db
                                       , doc:doc
                                       , json:JSON.stringify(json, null, ' ')
+                                      , hasrevisions: revs.length > 0
                                       , revisions: revs });
     });
   });

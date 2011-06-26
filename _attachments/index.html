@@ -78,6 +78,7 @@
 
     <script type="text/html" id="document_tpl">
       <div id="document"><pre><code>{{json}}</code></pre></div>
+      {{#hasrevisions}}
       <ul>
         <li class="header">Revisions</li>
         {{#revisions}}
@@ -85,6 +86,7 @@
         {{^available}}<li><span class="unavailable">{{rev}}</span>{{/available}}
         {{/revisions}}
       </ul>
+      {{/hasrevisions}}
       <div style="padding:10px;">
         <a href="#/db/{{db}}/{{doc}}/_delete/" class="button warning">Delete</a>
       </div>
