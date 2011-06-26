@@ -198,12 +198,28 @@ var MobileFuton = (function () {
     renderer.render('confirm_tpl', data);
   });
 
-
   router.get('#/db/:db/:doc', function (db, doc) {
+    router.forward('#/db/' + db + '/' + doc + '/rev/current/');
+  });
+
+  router.get('#/db/:db/:doc/rev/:rev/', function (db, doc, rev) {
+
     setTitle(doc);
     db = decodeURIComponent(db);
-    $.couch.db(db).openDoc(doc).then(function(json) {
-      renderer.render('document_tpl', {db: db, doc:doc, json:JSON.stringify(json, null, ' ')});
+    var opts = {revs_info:true};
+    if (rev !== "current") {
+      opts.rev = rev;
+    }
+
+    $.couch.db(db).openDoc(doc, opts).then(function(json) {
+      var revs = $.map(json._revs_info || [], function(obj) {
+        return {rev:obj.rev, available:obj.status === "available"};
+      });
+      delete json._revs_info;
+      renderer.render('document_tpl', { db: db
+                                      , doc:doc
+                                      , json:JSON.stringify(json, null, ' ')
+                                      , revisions: revs });
     });
   });
 

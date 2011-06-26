@@ -92,7 +92,7 @@ var Router = (function() {
   }
 
   function trigger(verb, url, ctx, data) {
-    var match = matchPath(verb, url);
+    var match = matchPath(verb, url.split("?")[0]);
     if (match) {
       var args = match.match.slice(1);
       if (verb === "POST") {

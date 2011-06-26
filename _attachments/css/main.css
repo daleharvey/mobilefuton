@@ -365,3 +365,5 @@ li:last-child .delete {
 }
 
 .warning { color:red; }
+
+.unavailable { text-decoration: line-through; color:#999; }
