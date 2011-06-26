@@ -151,6 +151,14 @@ var MobileFuton = (function () {
     });
   });
 
+  router.get('#/db/:database/_delete/', function (db) {
+    var data = { action: "#delete_database"
+               , cancel: "#/db/" + db + "/"
+               , notice: "delete the database " + db
+               , action_btn: "Delete"
+               , form: [{key:"db", value:db}] };
+    renderer.render('confirm_tpl', data);
+  });
 
   router.get('#/db/:db/views/*view', function (db, view) {
 
@@ -319,6 +327,13 @@ var MobileFuton = (function () {
       $.when.apply(this, $.map(changes, setConfig)).then(function() {
         $('#saveconfig').val('Save Config');
       });
+    });
+  });
+
+
+  router.post('#delete_database', function (e, form) {
+    $.couch.db(form.db).drop().then(function() {
+      location.href = "#/db/";
     });
   });
 

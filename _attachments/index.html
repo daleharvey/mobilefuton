@@ -98,6 +98,11 @@
         <li><a href="#/db/{{db}}/views/{{ddoc}}-{{name}}">{{id}}/{{name}}</a></li>
         {{/views}}
       </ul>
+
+      <div style="padding:10px;">
+        <a href="#/db/{{db}}/_delete/" class="button warning">Delete</a>
+      </div>
+
     </script>
 
 
@@ -108,6 +113,24 @@
         <li><a href="#/db/{{database}}/{{id}}" class="button">{{id}}</a></li>
         {{/rows}}
       </ul>
+    </script>
+
+
+    <script type="text/html" id="confirm_tpl">
+      <form action="{{action}}">
+
+        {{#form}}
+        <input type="hidden" name="{{key}}" value="{{value}}" />
+        {{/form}}
+
+        <ul><li><p><strong>Are you sure you want to {{notice}}</strong></p></li></ul>
+        <div style="padding:10px;">
+          <a href="{{cancel}}" class="button">Cancel</a>
+        </div>
+        <div style="padding:10px;">
+          <input type="submit" value="{{action_btn}}" class="warning" />
+        </div>
+      </form>
     </script>
 
 
