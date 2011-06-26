@@ -169,10 +169,16 @@ var MobileFuton = (function () {
     setTitle(viewname);
 
     var callback = function(data) {
+
+      var rows = $.map(data.rows, function(obj) {
+        obj.name = encodeURIComponent(obj.id);
+        return obj;
+      });
+
       renderer.render('database_view_tpl', { database: dbname
                                            , start: 1
                                            , end: data.total_rows
-                                           , rows: data.rows
+                                           , rows: rows
                                            , total:data.total_rows });
     };
 
@@ -204,14 +210,16 @@ var MobileFuton = (function () {
 
   router.get('#/db/:db/:doc/rev/:rev/', function (db, doc, rev) {
 
+    var docId = decodeURIComponent(doc);
     setTitle(doc);
     db = decodeURIComponent(db);
+
     var opts = {revs_info:true};
     if (rev !== "current") {
       opts.rev = rev;
     }
 
-    $.couch.db(db).openDoc(doc, opts).then(function(json) {
+    $.couch.db(db).openDoc(docId, opts).then(function(json) {
       var revs = $.map(json._revs_info || [], function(obj) {
         return {rev:obj.rev, available:obj.status === "available"};
       });
