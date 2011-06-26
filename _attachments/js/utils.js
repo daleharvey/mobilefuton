@@ -1,4 +1,18 @@
+
 var Utils = {};
+
+    // File size pretty printing
+Utils.formatSize = function(size) {
+  var jump = 512;
+  if (size < jump) return size + " bytes";
+  var units = ["KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+  var i = 0;
+  while (size >= jump && i < units.length) {
+    i += 1;
+    size /= 1024
+  }
+  return size.toFixed(1) + ' ' + units[i - 1];
+}
 
 Utils.isMobile = function() {
   return navigator.userAgent.toLowerCase()

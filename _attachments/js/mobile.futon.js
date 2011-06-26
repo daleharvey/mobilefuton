@@ -144,8 +144,8 @@ var MobileFuton = (function () {
                  , db: database
                  , doc_count: info.doc_count
                  , update_seq: info.update_seq
-                 , disk_size: info.disk_size
-                 , data_size: info.data_size };
+                 , disk_size: Utils.formatSize(info.disk_size)
+                 , data_size: Utils.formatSize(info.data_size) };
 
       renderer.render('database_tpl', data);
     });
