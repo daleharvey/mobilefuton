@@ -1,14 +1,14 @@
 var Router = (function() {
 
-  var PATH_REPLACER = "([^\/]+)",
-      PATH_MATCHER  = /:([\w\d]+)/g,
-      WILD_MATCHER  = /\*([\w\d]+)/g,
-      WILD_REPLACER  = "(.*?)",
-      fun404        = null,
-      lastPage      = null,
-      history       = [],
-      params        = {},
-      routes        = {GET: [], POST: []};
+  var PATH_REPLACER = "([^\/]+)"
+    , PATH_MATCHER = (/:([\w\d]+)/g)
+    , WILD_MATCHER = (/\*([\w\d]+)/g)
+    , WILD_REPLACER = "(.*?)"
+    , lastPage
+    , history = []
+    , hashparams = {}
+    , params = {}
+    , routes = {GET: [], POST: []};
 
   $.each(document.location.search.slice(1).split("&"), function(i, param) {
     var tmp = param.split("=");
@@ -56,10 +56,6 @@ var Router = (function() {
     };
   }
 
-  function error404(fun) {
-    fun404 = fun;
-  }
-
   function toRegex(path) {
     if (path.constructor == String) {
       return new RegExp("^" + path.replace(PATH_MATCHER, PATH_REPLACER)
@@ -92,6 +88,13 @@ var Router = (function() {
   }
 
   function trigger(verb, url, ctx, data) {
+
+    hashparams = [];
+    $.each((url.split("?")[1] || "").split("&"), function(i, param) {
+      var tmp = param.split("=");
+      hashparams[tmp[0]] = tmp[1];
+    });
+
     var match = matchPath(verb, url.split("?")[0]);
     if (match) {
       var args = match.match.slice(1);
@@ -105,10 +108,6 @@ var Router = (function() {
       match.details.load.apply(this, args);
       if (verb === "GET") {
         lastPage = match.details;
-      }
-    } else {
-      if (fun404) {
-        fun404(verb, url);
       }
     }
   }
@@ -149,6 +148,10 @@ var Router = (function() {
     return history.length > (1 + x) ? history[history.length - (2 + x)]: false;
   }
 
+  function hashparam(key) {
+    return hashparams[key];
+  }
+
   return { previous : previous
          , forward : forward
          , back    : back
@@ -156,7 +159,7 @@ var Router = (function() {
          , post    : post
          , init    : init
          , matchesCurrent : matchesCurrent
-         , error404 : error404
+         , hashparam : hashparam
          , params : params };
 
 });

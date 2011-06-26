@@ -166,6 +166,14 @@ var MobileFuton = (function () {
       , viewname = view.replace('-', '/')
       , id = null;
 
+    var opts = {limit:11};
+    if (router.hashparam("startkey")) {
+      opts.startkey = JSON.parse(decodeURIComponent(router.hashparam("startkey")));
+    }
+    if (router.hashparam("descending")) {
+      opts.descending = true;
+    }
+
     setTitle(viewname);
 
     var callback = function(data) {
@@ -175,19 +183,37 @@ var MobileFuton = (function () {
         return obj;
       });
 
+      var backkey = data.rows[0];
+
+      if (router.hashparam("descending")) {
+        rows.reverse();
+        data.offset = data.total_rows - (data.offset + opts.limit);
+        backkey = data.rows[data.rows.length-1];
+      }
+
+      var end = ((data.offset + opts.limit - 1) > data.total_rows)
+        , max = end ? data.total_rows : data.offset + opts.limit - 1
+        , tmp = (end ? data.rows[data.rows.length-1] : rows.pop())
+        , startkey = JSON.stringify(tmp.key);
+
       renderer.render('database_view_tpl', { database: dbname
-                                           , start: 1
-                                           , end: data.total_rows
+                                           , hasNext: !end
+                                           , hasBack: data.offset > 1
+                                           , view: view
+                                           , start: data.offset + 1
+                                           , end: max
                                            , rows: rows
-                                           , total:data.total_rows });
+                                           , total:data.total_rows
+                                           , backkey: JSON.stringify(backkey.key)
+                                           , startkey: startkey});
     };
 
     if (view === '_all_docs') {
-      $.couch.db(db).allDocs({}).then(callback);
+      $.couch.db(db).allDocs(opts).then(callback);
     } else if (view === '_design_docs') {
-      $.couch.db(db).allDesignDocs({}).then(callback);
+      $.couch.db(db).allDesignDocs(opts).then(callback);
     } else {
-      $.couch.db(db).view(viewname, {}).then(callback);
+      $.couch.db(db).view(viewname, opts).then(callback);
     }
   });
 

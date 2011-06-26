@@ -125,6 +125,19 @@
         <li><a href="#/db/{{database}}/{{name}}">{{id}}</a></li>
         {{/rows}}
       </ul>
+
+      <div id="paginator">
+        {{#hasNext}}
+        <a href='#/db/{{database}}/views/{{view}}?startkey={{startkey}}'
+           class="button next">Next &gt;</a>
+        {{/hasNext}}
+        &nbsp;
+        {{#hasBack}}
+        <a href='#/db/{{database}}/views/{{view}}?descending=true&startkey={{backkey}}'Z
+           class="button back">&lt; Back</a>
+        {{/hasBack}}
+      </div>
+
     </script>
 
 

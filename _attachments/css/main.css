@@ -367,3 +367,15 @@ li:last-child .delete {
 .warning { color:red; }
 
 .unavailable { text-decoration: line-through; color:#999; }
+
+#paginator {
+    position:relative;
+    padding:10px;
+}
+
+#paginator .next, #paginator .back {
+    width:40%;
+}
+
+.next { position:absolute; right:10px; top:0px;}
+.back { position:absolute; top:0px;}
