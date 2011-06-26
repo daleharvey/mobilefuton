@@ -83,6 +83,14 @@
 
     <script type="text/html" id="database_tpl">
       <ul>
+        <li class="header">Database Info</li>
+        <li><span>Document Count: {{doc_count}}</span></li>
+        <li><span>Update Seq: {{update_seq}}</span></li>
+        <li><span>Disk Size: {{disk_size}}</span></li>
+        <li><span>Data Size: {{data_size}}</span></li>
+      </ul>
+
+      <ul>
         <li class="header">Views</li>
         <li><a href="#/db/{{db}}/views/_all_docs">All Documents</a></li>
         <li><a href="#/db/{{db}}/views/_design_docs">Design Documents</a></li>
@@ -107,7 +115,7 @@
       <ul id="db_list">
         <li class="header">Databases</li>
         {{#databases}}
-        <li><a href="#/db/{{url}}/" class="button">{{name}}</a></li>
+        <li><a href="#/db/{{url}}/">{{name}}</a></li>
         {{/databases}}
       </ul>
     </script>

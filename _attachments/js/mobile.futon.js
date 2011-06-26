@@ -105,7 +105,7 @@ var MobileFuton = (function () {
 
     $.couch.allDbs({
       success: function(data) {
-        getN($.map(data, designDocs)).then(function() {
+        $.when.apply(this, $.map(data, designDocs)).then(function() {
           var designDocs = [];
           $.each(arguments, function(id, ddocs) {
             $.each(ddocs[0].rows, function(ddocid, ddoc) {
@@ -124,12 +124,15 @@ var MobileFuton = (function () {
   router.get('#/db/:database/', function (database) {
 
     var dbname = decodeURIComponent(database)
-      , views = [];
+      , views = []
+      , $db = $.couch.db(dbname)
+      , allDocs = $db.allDesignDocs({include_docs:true});
 
     setTitle(dbname);
 
-    $.couch.db(dbname).allDesignDocs({include_docs:true}).then(function(ddocs) {
-
+    $.when.apply(this, [$db.info(), allDocs]).then(function(info, ddocs) {
+      ddocs = ddocs[0];
+      info = info[0];
       $.each(ddocs.rows, function(ddoc) {
         id = ddocs.rows[ddoc].doc._id;
         $.each(ddocs.rows[ddoc].doc.views || [], function(v) {
@@ -137,7 +140,14 @@ var MobileFuton = (function () {
         });
       });
 
-      renderer.render('database_tpl', {views:views, db:database});
+      var data = { views: views
+                 , db: database
+                 , doc_count: info.doc_count
+                 , update_seq: info.update_seq
+                 , disk_size: info.disk_size
+                 , data_size: info.data_size };
+
+      renderer.render('database_tpl', data);
     });
   });
 
@@ -151,14 +161,11 @@ var MobileFuton = (function () {
     setTitle(viewname);
 
     var callback = function(data) {
-
-      var tmp = { database: dbname
-                , start: 1
-                , end: data.total_rows
-                , rows: data.rows
-                , total:data.total_rows };
-
-      renderer.render('database_view_tpl', tmp);
+      renderer.render('database_view_tpl', { database: dbname
+                                           , start: 1
+                                           , end: data.total_rows
+                                           , rows: data.rows
+                                           , total:data.total_rows });
     };
 
     if (view === '_all_docs') {
@@ -309,16 +316,11 @@ var MobileFuton = (function () {
         }
       });
 
-      getN($.map(changes, setConfig)).then(function() {
+      $.when.apply(this, $.map(changes, setConfig)).then(function() {
         $('#saveconfig').val('Save Config');
       });
     });
   });
-
-
-  var getN = function(arr) {
-    return $.when.apply(this, arr);
-  };
 
 
   var setTitle = function(text) {

@@ -183,7 +183,7 @@ li a:hover {
     background: -webkit-gradient(linear, 0% 40%, 0% 70%, from(#EDEDED), to(#DADADA));
 }
 
-li a {
+li a, li span {
     display:block;
     padding:10px;
 }
