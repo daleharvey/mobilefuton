@@ -186,11 +186,24 @@ var MobileFuton = (function () {
   });
 
 
-  router.get('#/db/:db/*doc', function (db, doc) {
+  router.get('#/db/:db/:doc/_delete/', function (db, doc) {
+    var back = (router.previous(1) || "#/db/" + db + "/")
+      , data = { action: "#delete_doc"
+               , cancel: "#/db/" + db + "/"
+               , notice: "delete the document " + doc
+               , action_btn: "Delete"
+               , form: [ {key:"db", value:db}
+                       , {key:"doc", value:doc}
+                       , {key:"back", value:back} ]};
+    renderer.render('confirm_tpl', data);
+  });
+
+
+  router.get('#/db/:db/:doc', function (db, doc) {
     setTitle(doc);
     db = decodeURIComponent(db);
     $.couch.db(db).openDoc(doc).then(function(json) {
-      renderer.render('document_tpl', {json:JSON.stringify(json, null, ' ')});
+      renderer.render('document_tpl', {db: db, doc:doc, json:JSON.stringify(json, null, ' ')});
     });
   });
 
@@ -300,8 +313,6 @@ var MobileFuton = (function () {
     });
     replications.push(obj);
     localData.set('replications', replications);
-
-
   });
 
 
@@ -334,6 +345,15 @@ var MobileFuton = (function () {
   router.post('#delete_database', function (e, form) {
     $.couch.db(form.db).drop().then(function() {
       location.href = "#/db/";
+    });
+  });
+
+
+  router.post('#delete_doc', function (e, form) {
+    $.couch.db(form.db).openDoc(form.doc).then(function(doc) {
+      $.couch.db(form.db).removeDoc(doc).then(function() {
+        location.href = form.back;
+      });
     });
   });
 

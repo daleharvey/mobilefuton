@@ -144,9 +144,9 @@ var Router = (function() {
     return o;
   }
 
-  function previous() {
-
-    return history.length > 1 ? history[history.length - 2]: false;
+  function previous(x) {
+    x = x || 0;
+    return history.length > (1 + x) ? history[history.length - (2 + x)]: false;
   }
 
   return { previous : previous
