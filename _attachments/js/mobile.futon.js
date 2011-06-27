@@ -164,9 +164,9 @@ var MobileFuton = (function () {
 
     var dbname = decodeURIComponent(db)
       , viewname = view.replace('-', '/')
-      , id = null;
+      , id = null
+      , opts = {limit: 11};
 
-    var opts = {limit:11};
     if (router.hashparam("startkey")) {
       opts.startkey = JSON.parse(decodeURIComponent(router.hashparam("startkey")));
     }
@@ -196,7 +196,7 @@ var MobileFuton = (function () {
         , tmp = (end ? data.rows[data.rows.length-1] : rows.pop())
         , startkey = JSON.stringify(tmp.key);
 
-      renderer.render('database_view_tpl', { database: dbname
+      renderer.render('database_view_tpl', { db: dbname
                                            , hasNext: !end
                                            , hasBack: data.offset > 1
                                            , view: view
@@ -218,6 +218,25 @@ var MobileFuton = (function () {
   });
 
 
+  router.get('#/db/:db/:doc/:key/_delete/', function (db, doc, key) {
+
+    var keys = key.split(".");
+    keys.pop();
+
+    var backkey = (keys.length > 0 ? keys.join(".") + "/" : "")
+      , back = "#/db/" + db + "/" + doc + "/" + backkey
+      , data = { action: "#delete_key"
+               , cancel: "#/db/" + db + "/" + doc + "/"
+               , notice: "delete " + key + " from " + doc
+               , action_btn: "Delete"
+               , form: [ {key:"db", value:db}
+                       , {key:"doc", value:doc}
+                       , {key:"key", value:key}
+                       , {key:"back", value:back} ]};
+    renderer.render('confirm_tpl', data);
+  });
+
+
   router.get('#/db/:db/:doc/_delete/', function (db, doc) {
     var back = (router.previous(1) || "#/db/" + db + "/")
       , data = { action: "#delete_doc"
@@ -230,9 +249,56 @@ var MobileFuton = (function () {
     renderer.render('confirm_tpl', data);
   });
 
-  router.get('#/db/:db/:doc', function (db, doc) {
+  router.get('#/db/:db/:doc/', function (db, doc) {
     router.forward('#/db/' + db + '/' + doc + '/rev/current/');
   });
+
+  router.get('#/db/:db/:doc/rev/:rev/:key/', function (db, doc, rev, key) {
+
+    var opts = ((rev === "current") ? {} : {rev: rev})
+      , docId = decodeURIComponent(doc);
+
+    setTitle(docId);
+    db = decodeURIComponent(db);
+
+    $.couch.db(db).openDoc(docId, opts).then(function(json) {
+
+      var keys = []
+        , data = fetchObj(key.split(":"), json);
+
+      if (typeof data !== "object" && rev === "current") {
+        renderer.render('edit_key_tpl', { db: db
+                                        , key: key
+                                        , value: data
+                                        , doc:doc
+                                        , rev: rev
+                                        , keys: keys});
+
+      } else {
+
+        for (var obj in data) {
+          keys.push({ key: obj
+                    , terminal: (typeof data[obj] !== "object")
+                    , value: JSON.stringify(data[obj], null, ' ')
+                    , url: key + ":" + encodeURIComponent(obj)});
+        }
+
+        renderer.render('document_tpl', { db: db
+                                        , doc:doc
+                                        , rev: rev
+                                        , key: key
+                                        , optkey: "/" + key
+                                        , keys: keys});
+      }
+    });
+  });
+
+  function fetchObj(keyArr, obj) {
+    for(var tmp = obj, i = 0; i < keyArr.length; i++) {
+      tmp = tmp[decodeURIComponent(keyArr[i])];
+    }
+    return tmp;
+  }
 
   router.get('#/db/:db/:doc/rev/:rev/', function (db, doc, rev) {
 
@@ -246,12 +312,20 @@ var MobileFuton = (function () {
     }
 
     $.couch.db(db).openDoc(docId, opts).then(function(json) {
-      var revs = $.map(json._revs_info || [], function(obj) {
-        return {rev:obj.rev, available:obj.status === "available"};
-      });
+      var keys = []
+        , revs = $.map(json._revs_info || [], function(obj) {
+          return {rev:obj.rev, available:obj.status === "available"};
+        });
       delete json._revs_info;
+      $.each(json, function(obj) {
+        keys.push({ key: obj
+                  , value: JSON.stringify(json[obj], null, ' ')
+                  , url: obj});
+      });
       renderer.render('document_tpl', { db: db
                                       , doc:doc
+                                      , keys: keys
+                                      , rev: rev
                                       , json:JSON.stringify(json, null, ' ')
                                       , hasrevisions: revs.length > 0
                                       , revisions: revs });
@@ -349,6 +423,21 @@ var MobileFuton = (function () {
     }
   });
 
+
+  router.post('#savekey', function (e, form) {
+    $('#savekey').val('Saving ...');
+    $.couch.db(form.db).openDoc(form.doc).then(function(json) {
+      for(var tmp = json, keys = form.key.split(":"), i = 0; i < keys.length-1; i++) {
+        tmp = tmp[keys[i]];
+      }
+      tmp[keys[keys.length-1]] = form.value;
+      $.couch.db(form.db).saveDoc(json).then(function(json) {
+        $('#savekey').val('Save');
+      });
+    });
+  });
+
+
   router.post('#replication', function (e, form) {
 
     var obj = { source: form.custom_source || form.source
@@ -396,6 +485,19 @@ var MobileFuton = (function () {
   router.post('#delete_database', function (e, form) {
     $.couch.db(form.db).drop().then(function() {
       location.href = "#/db/";
+    });
+  });
+
+
+  router.post('#delete_key', function (e, form) {
+    $.couch.db(form.db).openDoc(form.doc).then(function(json) {
+      for(var tmp = json, keys = form.key.split(":"), i = 0; i < keys.length-1; i++) {
+        tmp = tmp[keys[i]];
+      }
+      delete tmp[keys[keys.length-1]];
+      $.couch.db(form.db).saveDoc(json).then(function(json) {
+        location.href = form.back;
+      });
     });
   });
 
