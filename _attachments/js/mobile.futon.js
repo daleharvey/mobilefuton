@@ -164,7 +164,7 @@ var MobileFuton = (function () {
     var dbname = decodeURIComponent(db)
       , viewname = view.replace('-', '/')
       , id = null
-      , opts = {limit: 11};
+      , opts = {limit: (view === "_design_docs" ? 99 : 11)};
 
     if (router.hashparam("startkey")) {
       opts.startkey = JSON.parse(decodeURIComponent(router.hashparam("startkey")));
@@ -193,7 +193,7 @@ var MobileFuton = (function () {
       var end = ((data.offset + opts.limit - 1) > data.total_rows)
         , max = end ? data.total_rows : data.offset + opts.limit - 1
         , tmp = (end ? data.rows[data.rows.length-1] : rows.pop())
-        , startkey = JSON.stringify(tmp.key);
+        , startkey = tmp && JSON.stringify(tmp.key);
 
       renderer.render('database_view_tpl', { db: dbname
                                            , hasNext: !end
@@ -203,7 +203,7 @@ var MobileFuton = (function () {
                                            , end: max
                                            , rows: rows
                                            , total:data.total_rows
-                                           , backkey: JSON.stringify(backkey.key)
+                                           , backkey: tmp && JSON.stringify(backkey.key)
                                            , startkey: startkey});
     };
 
