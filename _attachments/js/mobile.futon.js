@@ -434,13 +434,21 @@ var MobileFuton = (function () {
       for(var tmp = json, keys = form.key.split(":"), i = 0; i < keys.length-1; i++) {
         tmp = tmp[keys[i]];
       }
-      tmp[keys[keys.length-1]] = form.value;
+      tmp[keys[keys.length-1]] = parseJSON(form.value);
       $.couch.db(form.db).saveDoc(json).then(function(json) {
         $('#savekey').val('Save');
       });
     });
   });
 
+
+  function parseJSON(json) {
+    try {
+      return JSON.parse(json);
+    } catch(err) {
+      return json;
+    }
+  }
 
   router.post('#replication', function (e, form) {
 
