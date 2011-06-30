@@ -293,7 +293,7 @@ var MobileFuton = (function () {
                                         , rev: rev
                                         , key: key
                                         , optkey: "/" + key
-                                        , keys: keys});
+                                        , keys: keys}, {}, addDocEvents);
       }
     });
   });
@@ -327,7 +327,7 @@ var MobileFuton = (function () {
                                       , rev: rev
                                       , json:JSON.stringify(json, null, ' ')
                                       , hasrevisions: revs.length > 0
-                                      , revisions: revs });
+                                      , revisions: revs }, {}, addDocEvents);
     });
   });
 
@@ -423,6 +423,26 @@ var MobileFuton = (function () {
   });
 
 
+  router.post('#addkey', function (e, form) {
+    $('#addkeybtn').val('Saving ...');
+    $.couch.db(form.db).openDoc(form.doc).then(function(json) {
+      for(var tmp=json, keys=form.key.split(":"), i=0; i < keys.length; i++) {
+        tmp = tmp[keys[i]];
+      }
+      if (typeof form["key[]"] === "string") {
+        tmp[form["key[]"]] = parseJSON(form["value[]"]);
+      } else {
+        for(var x = 0; x < form["key[]"].length-1; x++) {
+          tmp[form["key[]"][x]] = parseJSON(form["value[]"][x]);
+        }
+      }
+      $.couch.db(form.db).saveDoc(json).then(function(json) {
+        router.refresh();
+      });
+    });
+  });
+
+
   router.post('#savekey', function (e, form) {
     $('#savekey').val('Saving ...');
     $.couch.db(form.db).openDoc(form.doc).then(function(json) {
@@ -479,6 +499,11 @@ var MobileFuton = (function () {
         $('#saveconfig').val('Save Config');
       });
     });
+  });
+
+
+  router.post('#addkey', function (e, form) {
+    console.log(form);
   });
 
 
@@ -690,6 +715,21 @@ var MobileFuton = (function () {
     }
   }
 
+
+  function addDocEvents(tpl) {
+    console.log("hello");
+    $("#addkey", tpl).bind('mousedown', function() {
+    console.log("wtf");
+
+      if ($("#addkeylist").children().length === 0) {
+        $("#addkeylist").append('<li class="header">New JSON<li>');
+        $("#addkeyform").append('<input type="submit" value="Save" id="addkeybtn" />');
+      }
+
+      var html = '<li class="selectwrapper"><input placeholder="key" type="text" name="key[]" /></li><li><textarea placeholder="value" name="value[]"></textarea></li>';
+      $("#addkeylist").append(html);
+    });
+  };
 
   updateSession(function() {
     router.init(window);

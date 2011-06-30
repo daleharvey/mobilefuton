@@ -107,6 +107,16 @@
         {{/keys}}
       </ul>
 
+      <form action="#addkey" id="addkeyform">
+        <input type="hidden" name="db" value="{{db}}" />
+        <input type="hidden" name="doc" value="{{doc}}">
+        <input type="hidden" name="key" value="{{key}}">
+
+        <ul id="addkeylist"></ul>
+        <div style="padding:10px;">
+          <a class="button" id="addkey">Add Key</a>
+        </div>
+      </form>
 
       {{#hasrevisions}}
       <ul>
