@@ -169,9 +169,28 @@
       </ul>
 
       <div style="padding:10px;">
+        <a href="#/db/{{db}}/_create_doc/" class="button">Create New Document</a>
+        <br />
         <a href="#/db/{{db}}/_delete/" class="button warning">Delete</a>
       </div>
 
+    </script>
+
+
+    <script type="text/html" id="create_doc_tpl">
+      <form action="#create_doc">
+        <input type="hidden"  name="db" value="{{db}}" />
+        <ul>
+          <li class="header">Create Document</li>
+          <li class="selectwrapper">
+            <input type="text"  name="id" placeholder="id" />
+          </li>
+          <li><textarea placeholder="json" name="value"></textarea></li>
+        </ul>
+        <div style="padding:10px;">
+          <input type="submit" value="Create" />
+        </div>
+      </form>
     </script>
 
 

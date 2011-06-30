@@ -151,6 +151,11 @@ var MobileFuton = (function () {
   });
 
 
+  router.get('#/db/:database/_create_doc/', function (db) {
+    renderer.render('create_doc_tpl', {db:db});
+  });
+
+
   router.get('#/db/:database/_delete/', function (db) {
     var data = { action: "#delete_database"
                , cancel: "#/db/" + db + "/"
@@ -408,6 +413,20 @@ var MobileFuton = (function () {
     } else {
       renderer.render('logged_out');
     }
+  });
+
+
+  router.post('#create_doc', function (e, form) {
+    var obj = parseJSON(form.value || "{}");
+    if (typeof obj !== "object" || $.isArray(obj)) {
+      obj = {};
+    }
+    if (form.id) {
+      obj._id = form.id;
+    }
+    $.couch.db(form.db).saveDoc(obj).then(function(res) {
+      location.href = "#/db/" + form.db + "/" + res.id + "/";
+    });
   });
 
 
