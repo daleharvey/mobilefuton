@@ -190,6 +190,9 @@ var MobileFuton = (function () {
         backkey = data.rows[data.rows.length-1];
       }
 
+      data.offset = data.offset || 0;
+      data.total_rows = data.total_rows || 0;
+
       var end = ((data.offset + opts.limit - 1) > data.total_rows)
         , max = end ? data.total_rows : data.offset + opts.limit - 1
         , tmp = (end ? data.rows[data.rows.length-1] : rows.pop())

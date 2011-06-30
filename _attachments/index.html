@@ -146,10 +146,15 @@
 
 
     <script type="text/html" id="database_view_tpl">
+      {{#total}}
       <p>{{start}} to {{end}} of {{total}}</p>
+      {{/total}}
       <ul>
         {{#rows}}
         <li><a href="#/db/{{db}}/{{name}}/">{{id}}</a></li>
+        {{/rows}}
+        {{^rows}}
+        <li class="none">No Results</li>
         {{/rows}}
       </ul>
 
