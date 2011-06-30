@@ -171,7 +171,8 @@ var MobileFuton = (function () {
     var dbname = decodeURIComponent(db)
       , viewname = view.replace('-', '/')
       , id = null
-      , opts = {limit: (view === "_design_docs" ? 99 : 11)};
+      , opts = {limit: (view === "_design_docs" ? 99 : 11)}
+      , paginate = (view !== "_design_docs");
 
     if (router.hashparam("startkey")) {
       opts.startkey = JSON.parse(decodeURIComponent(router.hashparam("startkey")));
@@ -209,7 +210,7 @@ var MobileFuton = (function () {
 
       renderer.render('database_view_tpl', { db: dbname
                                            , hasNext: !end
-                                           , hasBack: data.offset > 1
+                                           , hasBack: data.offset > 1 && paginate
                                            , view: view
                                            , start: data.offset + 1
                                            , end: max
