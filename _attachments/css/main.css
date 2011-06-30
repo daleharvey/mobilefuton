@@ -380,6 +380,6 @@ li:last-child .delete {
 .next { position:absolute; right:10px; top:0px;}
 .back { position:absolute; top:0px;}
 
-.jsonval { display:inline; color:#999; font-weight:normal; }
+.jsonval { display:inline; color:#999; font-weight:normal; white-space: pre-wrap; white-space: -moz-pre-wrap;}
 
 #savekey { margin-bottom:20px; }
