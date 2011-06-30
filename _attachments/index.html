@@ -88,7 +88,9 @@
           <input type="hidden" name="doc" value="{{doc}}" />
           <input type="hidden" name="key" value="{{key}}" />
           <input type="submit" value="Save" id="savekey" />
-          <a href="#/db/{{db}}/{{doc}}/{{key}}/_delete/" class="button warning">Delete</a>
+          <a href="#/db/{{db}}/{{doc}}/{{key}}/_delete/" class="button warning">
+            Delete
+          </a>
         </div>
       </form>
     </script>
@@ -99,7 +101,9 @@
       <ul>
         <li class="header">JSON</li>
         {{#keys}}
-        <li><a href="#/db/{{db}}/{{doc}}/rev/{{rev}}/{{url}}/">{{key}}: <span class="jsonval">{{value}}</span></a></li>
+        <li><a href="#/db/{{db}}/{{doc}}/rev/{{rev}}/{{url}}/">
+            {{key}}: <span class="jsonval">{{value}}</span></a>
+        </li>
         {{/keys}}
       </ul>
 
@@ -116,7 +120,9 @@
       </ul>
       {{/hasrevisions}}
       <div style="padding:10px;">
-        <a href="#/db/{{db}}/{{doc}}{{optkey}}/_delete/" class="button warning">Delete</a>
+        <a href="#/db/{{db}}/{{doc}}{{optkey}}/_delete/" class="button warning">
+          Delete
+        </a>
       </div>
     </script>
 
@@ -180,7 +186,9 @@
         <input type="hidden" name="{{key}}" value="{{value}}" />
         {{/form}}
 
-        <ul><li><p><strong>Are you sure you want to {{notice}}</strong></p></li></ul>
+        <ul><li>
+            <p><strong>Are you sure you want to {{notice}}</strong></p>
+        </li></ul>
         <div style="padding:10px;">
           <a href="{{cancel}}" class="button">Cancel</a>
         </div>

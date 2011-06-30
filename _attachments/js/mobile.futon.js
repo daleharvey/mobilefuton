@@ -270,23 +270,22 @@ var MobileFuton = (function () {
       var keys = []
         , data = fetchObj(key.split(":"), json);
 
-      if (typeof data !== "object" && rev === "current") {
+      for (var obj in data) {
+        keys.push({ key: obj
+                  , terminal: (typeof data[obj] !== "object")
+                  , value: JSON.stringify(data[obj], null, ' ')
+                  , url: key + ":" + encodeURIComponent(obj)});
+      }
+
+      if ((typeof data !== "object" || keys.length === 0) && rev === "current") {
         renderer.render('edit_key_tpl', { db: db
                                         , key: key
-                                        , value: data
+                                        , value: JSON.stringify(data)
                                         , doc:doc
                                         , rev: rev
                                         , keys: keys});
 
       } else {
-
-        for (var obj in data) {
-          keys.push({ key: obj
-                    , terminal: (typeof data[obj] !== "object")
-                    , value: JSON.stringify(data[obj], null, ' ')
-                    , url: key + ":" + encodeURIComponent(obj)});
-        }
-
         renderer.render('document_tpl', { db: db
                                         , doc:doc
                                         , rev: rev
@@ -437,6 +436,7 @@ var MobileFuton = (function () {
       tmp[keys[keys.length-1]] = parseJSON(form.value);
       $.couch.db(form.db).saveDoc(json).then(function(json) {
         $('#savekey').val('Save');
+        router.refresh();
       });
     });
   });

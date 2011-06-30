@@ -153,6 +153,7 @@ var Router = (function() {
   }
 
   return { previous : previous
+         , refresh : urlChanged
          , forward : forward
          , back    : back
          , get     : get
