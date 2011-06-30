@@ -288,7 +288,19 @@ var MobileFuton = (function () {
                                         , keys: keys});
 
       } else {
+        var canedit = true
+          , preview = ""
+          , tmp = key.split(":");
+        if (tmp[0] === "_attachments" && tmp.length > 1) {
+          canedit = false;
+          if (/(image\/png|image\/jpeg|image\/jpg)/.test(data.content_type)) {
+            preview = '<img src="/' + db + '/' + docId + '/' +
+              decodeURIComponent(tmp[1]).replace(":", "/") + '" />';
+          }
+        }
         renderer.render('document_tpl', { db: db
+                                        , canedit: canedit
+                                        , preview: preview
                                         , doc:doc
                                         , rev: rev
                                         , key: key
@@ -322,6 +334,7 @@ var MobileFuton = (function () {
                   , url: obj});
       });
       renderer.render('document_tpl', { db: db
+                                      , canedit: true
                                       , doc:doc
                                       , keys: keys
                                       , rev: rev
@@ -499,11 +512,6 @@ var MobileFuton = (function () {
         $('#saveconfig').val('Save Config');
       });
     });
-  });
-
-
-  router.post('#addkey', function (e, form) {
-    console.log(form);
   });
 
 
@@ -717,10 +725,7 @@ var MobileFuton = (function () {
 
 
   function addDocEvents(tpl) {
-    console.log("hello");
     $("#addkey", tpl).bind('mousedown', function() {
-    console.log("wtf");
-
       if ($("#addkeylist").children().length === 0) {
         $("#addkeylist").append('<li class="header">New JSON<li>');
         $("#addkeyform").append('<input type="submit" value="Save" id="addkeybtn" />');
