@@ -150,6 +150,7 @@ var MobileFuton = (function () {
     });
   });
 
+
   router.get('#/db/:database/_delete/', function (db) {
     var data = { action: "#delete_database"
                , cancel: "#/db/" + db + "/"
@@ -158,6 +159,7 @@ var MobileFuton = (function () {
                , form: [{key:"db", value:db}] };
     renderer.render('confirm_tpl', data);
   });
+
 
   router.get('#/db/:db/views/*view', function (db, view) {
 
@@ -296,12 +298,6 @@ var MobileFuton = (function () {
     });
   });
 
-  function fetchObj(keyArr, obj) {
-    for(var tmp = obj, i = 0; i < keyArr.length; i++) {
-      tmp = tmp[decodeURIComponent(keyArr[i])];
-    }
-    return tmp;
-  }
 
   router.get('#/db/:db/:doc/rev/:rev/', function (db, doc, rev) {
 
@@ -442,14 +438,6 @@ var MobileFuton = (function () {
   });
 
 
-  function parseJSON(json) {
-    try {
-      return JSON.parse(json);
-    } catch(err) {
-      return json;
-    }
-  }
-
   router.post('#replication', function (e, form) {
 
     var obj = { source: form.custom_source || form.source
@@ -523,19 +511,18 @@ var MobileFuton = (function () {
   });
 
 
-  var setTitle = function(text) {
+  function setTitle(text) {
     $('#title, title').text(text);
   };
 
 
-  var unauth = function() {
+  function unauth() {
     clearRefresh();
     renderer.render('unauthorized_tpl');
   };
 
 
-  var updateActiveTasks = function(transition) {
-
+  function updateActiveTasks(transition) {
     $.couch.activeTasks({error: unauth}).then(function(data) {
       var $html = $(render('#tasks_tpl', {tasks: data}));
       $('#tasks').replaceWith($html);
@@ -580,7 +567,7 @@ var MobileFuton = (function () {
   }
 
 
-  var parseReplicationTask = function(task) {
+  function parseReplicationTask(task) {
 
     var parts = (task.replace(/`/g, "").split(/:(.+)?/))
       , where = (parts[1].split("->"))
@@ -599,7 +586,7 @@ var MobileFuton = (function () {
   };
 
 
-  var updateReplications = function() {
+  function updateReplications() {
 
     var err = function() {
       $('#running li:not(.header)').remove();
@@ -643,24 +630,24 @@ var MobileFuton = (function () {
   };
 
 
-  var render = function(tpl, data) {
+  function render(tpl, data) {
     return Mustache.to_html($(tpl).html(), data);
   }
 
 
-  var renderTo = function(dom, tpl, data) {
+  function renderTo(dom, tpl, data) {
     $(dom).empty().append(render(tpl, data));
   }
 
 
-  var refreshSession = function() {
+  function refreshSession() {
     updateSession(function() {
       location.href = router.previous() || "#";
     });
   }
 
 
-  var updateSession = function(callback) {
+  function updateSession(callback) {
     $.couch.session().then(function(data) {
       $$("#user").user = data.userCtx;
       renderLogin();
@@ -671,7 +658,7 @@ var MobileFuton = (function () {
   }
 
 
-  var renderLogin = function() {
+  function renderLogin() {
     var user = $$("#user").user;
     if (user.name) {
       renderTo("#user", "#logged_in_btn", user);
@@ -681,9 +668,26 @@ var MobileFuton = (function () {
   }
 
 
-  var isAdminParty = function() {
+  function  isAdminParty() {
     return !$$("#user").user.name &&
       $$("#user").user.roles.indexOf('_admin') != -1;
+  }
+
+
+  function fetchObj(keyArr, obj) {
+    for(var tmp = obj, i = 0; i < keyArr.length; i++) {
+      tmp = tmp[decodeURIComponent(keyArr[i])];
+    }
+    return tmp;
+  }
+
+
+  function parseJSON(json) {
+    try {
+      return JSON.parse(json);
+    } catch(err) {
+      return json;
+    }
   }
 
 
