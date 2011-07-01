@@ -599,12 +599,13 @@ var MobileFuton = (function () {
     $('.delete', tpl).bind('mousedown', function() {
       var parent = ($(this).parents('li'))
         , source = parent.data('source')
-        , target = parent.data('target')
-        , repl = $.grep(replications, function(obj) {
-          return !(obj.source === source && obj.target === target);
-        });
-      localData.set('replications', repl);
-      location.reload(true);
+        , target = parent.data('target');
+
+      replications = $.grep(replications, function(obj) {
+        return !(obj.source === source && obj.target === target);
+      });
+      localData.set('replications', replications);
+      router.refresh();
     });
   }
 
