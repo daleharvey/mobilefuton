@@ -261,6 +261,11 @@ option {
     padding-left:10px;
 }
 
+.home {
+    position:absolute;
+    top:10px;
+    left:15px;
+}
 .home.plain_btn {
     padding: 0 5px;
 }
