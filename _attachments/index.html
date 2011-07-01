@@ -344,26 +344,26 @@
 
 
     <script type="text/html" id="logged_out">
-      <ul>
-        <li>
-          <form action="#login">
-            <div class="selectwrapper">
-              <input type="text" id="username" name="username"
-                     placeholder="username" />
-            </div>
-            <div class="selectwrapper">
-              <input type="password" id="password" name="password"
-                     placeholder="password" />
-            </div>
+      <form action="#login">
+        <ul>
+          <li class="selectwrapper">
+            <input type="text" id="username" name="username"
+                   placeholder="username" />
+          </li>
+          <li class="selectwrapper">
+            <input type="password" id="password" name="password"
+                   placeholder="password" />
+          </li>
+          <li>
             <label for="register">
               <input type="checkbox" id="register" name="register" /> Register
             </label>
-            <div class="selectwrapper">
-              <input type="submit" value="Submit" />
-            </div>
-          </form>
           </li>
-      </ul>
+        </ul>
+        <div class="selectwrapper">
+          <input type="submit" value="Login" />
+        </div>
+      </form>
     </script>
 
 

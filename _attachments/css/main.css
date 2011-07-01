@@ -336,7 +336,7 @@ select {
 option { font-weight:normal; text-shadow:none; padding:5px; outline:none;}
 
 .selectwrapper { padding:10px;}
-.selectwrapper input[type="text"] { margin:0px; width:100%; }
+.selectwrapper input[type="text"], .selectwrapper input[type="password"] { margin:0px; width:100%; }
 
 li:last-child .delete {
     border-radius:0px 0px 5px 0px;
@@ -388,3 +388,11 @@ li:last-child .delete {
 .jsonval { display:inline; color:#999; font-weight:normal; white-space: pre-wrap; white-space: -moz-pre-wrap;}
 
 #savekey { margin-bottom:20px; }
+
+::-webkit-input-placeholder {
+    font-weight: normal !important;
+}
+
+:-moz-placeholder {
+    font-weight: normal !important;
+}
