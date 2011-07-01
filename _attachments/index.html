@@ -23,15 +23,20 @@
 
     <script type="text/html" id="home_tpl">
       <div class="info">
-        <p><strong>Version:</strong><br />{{version}}</p>
-        <p><strong>Current Host</strong><br />http://{{ip}}:{{port}}/</p>
+        <p><span class="light">Version:</span><br />{{version}}</p>
+        <p><span class="light">Current Host</span><br />http://{{ip}}:{{port}}/</p>
       </div>
       <ul>
-        <li><a href="#/db/">Databases</a></li>
-        <li><a href="#/replication/">Replication</a></li>
-        <li><a href="#/tasks/">Active Tasks</a></li>
-        <li><a href="#/couchapps/">CouchApps</a></li>
-        <li><a href="#/config/">Config</a></li>
+        <li><a href="#/db/">Databases
+            <span class="arrow right">›</span></a></li>
+        <li><a href="#/replication/">Replication
+            <span class="arrow right">›</span></a></li>
+        <li><a href="#/tasks/">Active Tasks
+            <span class="arrow right">›</span></a></li>
+        <li><a href="#/couchapps/">CouchApps
+            <span class="arrow right">›</span></a></li>
+        <li><a href="#/config/">Config
+            <span class="arrow right">›</span></a></li>
       </ul>
 
       {{#adminparty}}
@@ -70,7 +75,7 @@
     <script type="text/html" id="couchapps_tpl">
       <ul>
         {{#couchapps}}
-        <li><a href="{{url}}">{{name}}</a></li>
+        <li><a href="{{url}}">{{name}}</a><span class="arrow right">›</span></li>
         {{/couchapps}}
       </ul>
     </script>
@@ -103,7 +108,8 @@
         {{#keys}}
         {{#canedit}}
         <li><a href="#/db/{{db}}/{{doc}}/rev/{{rev}}/{{url}}/">
-            {{key}}: <span class="jsonval">{{value}}</span></a></li>
+            {{key}}: <span class="jsonval">{{value}}</span>
+            <span class="arrow right">›</span></a></li>
         {{/canedit}}
         {{^canedit}}
         <li class="selectwrapper">{{key}}: <span class="jsonval">{{value}}</span></li>
@@ -137,7 +143,7 @@
         <li class="header">Revisions</li>
         {{#revisions}}
         {{#available}}
-        <li><a href="#/db/{{db}}/{{doc}}/rev/{{rev}}/">{{rev}}</a></li>
+        <li><a href="#/db/{{db}}/{{doc}}/rev/{{rev}}/">{{rev}}<span class="arrow right">›</span></a></li>
         {{/available}}
         {{^available}}<li><span class="unavailable">{{rev}}</span>{{/available}}
         {{/revisions}}
@@ -161,10 +167,10 @@
 
       <ul>
         <li class="header">Views</li>
-        <li><a href="#/db/{{db}}/views/_all_docs">All Documents</a></li>
-        <li><a href="#/db/{{db}}/views/_design_docs">Design Documents</a></li>
+        <li><a href="#/db/{{db}}/views/_all_docs">All Documents<span class="arrow right">›</span></a></li>
+        <li><a href="#/db/{{db}}/views/_design_docs">Design Documents<span class="arrow right">›</span></a></li>
         {{#views}}
-        <li><a href="#/db/{{db}}/views/{{ddoc}}-{{name}}">{{id}}/{{name}}</a></li>
+        <li><a href="#/db/{{db}}/views/{{ddoc}}-{{name}}">{{id}}/{{name}}<span class="arrow right">›</span></a></li>
         {{/views}}
       </ul>
 
@@ -200,7 +206,7 @@
       {{/total}}
       <ul>
         {{#rows}}
-        <li><a href="#/db/{{db}}/{{name}}/">{{{display}}}</a></li>
+        <li><a href="#/db/{{db}}/{{name}}/">{{{display}}}<span class="arrow right">›</span></a></li>
         {{/rows}}
         {{^rows}}
         <li class="none">No Results</li>
@@ -246,7 +252,7 @@
       <ul id="db_list">
         <li class="header">Databases</li>
         {{#databases}}
-        <li><a href="#/db/{{url}}/">{{name}}</a></li>
+        <li><a href="#/db/{{url}}/">{{name}}<span class="arrow right">›</span></a></li>
         {{/databases}}
       </ul>
     </script>
