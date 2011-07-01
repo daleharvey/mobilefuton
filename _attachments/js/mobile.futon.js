@@ -643,6 +643,7 @@ var MobileFuton = (function () {
   function updateReplications() {
 
     var err = function() {
+      clearRefresh();
       $('#running li:not(.header)').remove();
       $("#running").append('<li class="none">You need to be an admin to ' +
                            'read current tasks</li>');
