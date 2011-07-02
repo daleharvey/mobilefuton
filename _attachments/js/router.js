@@ -66,7 +66,7 @@ var Router = (function() {
   }
 
   function urlChanged(maintainScroll) {
-    history.push(window.location.hash);
+    history.push("#" + (document.location.href.split("#")[1] || ""));
     trigger("GET", "#" + (document.location.href.split("#")[1] || ""));
     if (maintainScroll !== true) {
       //window.scrollTo(0,0);
@@ -105,6 +105,15 @@ var Router = (function() {
       if (lastPage && lastPage.unload && verb === "GET") {
         lastPage.unload.apply(this, args);
       }
+
+      var opq = match.details.opts || {}
+        , isBack = (history.length > 2 && url === history[history.length-3]);
+
+      if (isBack) {
+        opq.router = {};
+        opq.router.back = true;
+      }
+      args.unshift(opq);
       match.details.load.apply(this, args);
       if (verb === "GET") {
         lastPage = match.details;

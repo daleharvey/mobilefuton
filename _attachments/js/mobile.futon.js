@@ -62,7 +62,7 @@ var MobileFuton = (function () {
     , clearRefresh = function() { clearInterval(interval); };
 
 
-  router.get(/^(#)?$/, function () {
+  router.get(/^(#)?$/, function (rtr) {
     setTitle('CouchDB');
     $.couch.info().then(function(info) {
       var tpldata =
@@ -70,12 +70,12 @@ var MobileFuton = (function () {
           , port: location.port || 80
           , version: (info.version)
           , adminparty: isAdminParty() }
-      renderer.render('home_tpl', tpldata);
+      renderer.render('home_tpl', tpldata, rtr);
     });
-  });
+  }).opts({"foo":"bar"});
 
 
-  router.get('#/couchapps/', function () {
+  router.get('#/couchapps/', function(rtr) {
 
     setTitle('Couchapps');
 
@@ -96,7 +96,7 @@ var MobileFuton = (function () {
           couchapps.push({url:url, name:ddoc.ddoc.split('/')[1]});
         }
         if (completed === max) {
-          renderer.render('couchapps_tpl', {couchapps:couchapps});
+          renderer.render('couchapps_tpl', {couchapps:couchapps}, rtr);
         }
       }
 
@@ -121,7 +121,7 @@ var MobileFuton = (function () {
   });
 
 
-  router.get('#/db/:database/', function (database) {
+  router.get('#/db/:database/', function (rtr, database) {
 
     var dbname = decodeURIComponent(database)
       , views = []
@@ -146,27 +146,27 @@ var MobileFuton = (function () {
                  , update_seq: info.update_seq
                  , disk_size: Utils.formatSize(info.disk_size) };
 
-      renderer.render('database_tpl', data);
+      renderer.render('database_tpl', data, rtr);
     });
   });
 
 
-  router.get('#/db/:database/_create_doc/', function (db) {
-    renderer.render('create_doc_tpl', {db:db});
+  router.get('#/db/:database/_create_doc/', function (rtr, db) {
+    renderer.render('create_doc_tpl', {db:db}, rtr);
   });
 
 
-  router.get('#/db/:database/_delete/', function (db) {
+  router.get('#/db/:database/_delete/', function (rtr, db) {
     var data = { action: "#delete_database"
                , cancel: "#/db/" + db + "/"
                , notice: "delete the database " + db
                , action_btn: "Delete"
                , form: [{key:"db", value:db}] };
-    renderer.render('confirm_tpl', data);
+    renderer.render('confirm_tpl', data, rtr);
   });
 
 
-  router.get('#/db/:db/views/*view', function (db, view) {
+  router.get('#/db/:db/views/*view', function (rtr, db, view) {
 
     var dbname = decodeURIComponent(db)
       , viewname = view.replace('-', '/')
@@ -217,7 +217,7 @@ var MobileFuton = (function () {
                                            , rows: rows
                                            , total:data.total_rows
                                            , backkey: tmp && JSON.stringify(backkey.key)
-                                           , startkey: startkey});
+                                           , startkey: startkey}, rtr);
     };
 
     if (view === '_all_docs') {
@@ -230,7 +230,7 @@ var MobileFuton = (function () {
   });
 
 
-  router.get('#/db/:db/:doc/:key/_delete/', function (db, doc, key) {
+  router.get('#/db/:db/:doc/:key/_delete/', function (rtr, db, doc, key) {
 
     var keys = key.split(".");
     keys.pop();
@@ -245,11 +245,11 @@ var MobileFuton = (function () {
                        , {key:"doc", value:doc}
                        , {key:"key", value:key}
                        , {key:"back", value:back} ]};
-    renderer.render('confirm_tpl', data);
+    renderer.render('confirm_tpl', data, rtr);
   });
 
 
-  router.get('#/db/:db/:doc/_delete/', function (db, doc) {
+  router.get('#/db/:db/:doc/_delete/', function(rtr, db, doc) {
     var back = (router.previous(1) || "#/db/" + db + "/")
       , data = { action: "#delete_doc"
                , cancel: "#/db/" + db + "/"
@@ -258,14 +258,14 @@ var MobileFuton = (function () {
                , form: [ {key:"db", value:db}
                        , {key:"doc", value:doc}
                        , {key:"back", value:back} ]};
-    renderer.render('confirm_tpl', data);
+    renderer.render('confirm_tpl', data, rtr);
   });
 
-  router.get('#/db/:db/:doc/', function (db, doc) {
-    router.forward('#/db/' + db + '/' + doc + '/rev/current/');
+  router.get('#/db/:db/:doc/', function (rtr, db, doc) {
+    router.forward('#/db/' + db + '/' + doc + '/rev/current/', {}, rtr);
   });
 
-  router.get('#/db/:db/:doc/rev/:rev/:key/', function (db, doc, rev, key) {
+  router.get('#/db/:db/:doc/rev/:rev/:key/', function (rtr, db, doc, rev, key) {
 
     var opts = ((rev === "current") ? {} : {rev: rev})
       , docId = decodeURIComponent(doc);
@@ -291,7 +291,7 @@ var MobileFuton = (function () {
                                         , value: JSON.stringify(data)
                                         , doc:doc
                                         , rev: rev
-                                        , keys: keys});
+                                        , keys: keys}, rtr);
 
       } else {
         var canedit = true
@@ -311,13 +311,13 @@ var MobileFuton = (function () {
                                         , rev: rev
                                         , key: key
                                         , optkey: "/" + key
-                                        , keys: keys}, {}, addDocEvents);
+                                        , keys: keys}, rtr, addDocEvents);
       }
     });
   });
 
 
-  router.get('#/db/:db/:doc/rev/:rev/', function (db, doc, rev) {
+  router.get('#/db/:db/:doc/rev/:rev/', function (rtr, db, doc, rev) {
 
     var docId = decodeURIComponent(doc);
     setTitle(doc);
@@ -346,35 +346,35 @@ var MobileFuton = (function () {
                                       , rev: rev
                                       , json:JSON.stringify(json, null, ' ')
                                       , hasrevisions: revs.length > 0
-                                      , revisions: revs }, {}, addDocEvents);
+                                      , revisions: revs }, rtr, addDocEvents);
     });
   });
 
 
-  router.get('#/db/', function () {
+  router.get('#/db/', function(rtr) {
     setTitle('Databases');
     $.couch.allDbs().then(function(data) {
       data = $.map(data, function(url) {
         return {url:encodeURIComponent(url), name: url};
       });
-      renderer.render('databases_tpl', {databases: data});
+      renderer.render('databases_tpl', {databases: data}, rtr);
     });
   });
 
 
-  router.get('#/replication/', function () {
+  router.get('#/replication/', function(rtr) {
     setTitle('Replication');
     $.couch.allDbs({}).then(function(data) {
       renderer.render('replication_tpl', {
         databases: data,
         replications: replications
-      }, {}, function(tpl) { setupReplicationEvents(tpl); updateReplications(); });
+      }, rtr, function(tpl) { setupReplicationEvents(tpl); updateReplications(); });
     });
     interval = setInterval(updateReplications, 5000);
   }).unload(clearRefresh);
 
 
-  router.get('#/config/', function () {
+  router.get('#/config/', function(rtr) {
 
     setTitle('Config');
 
@@ -392,32 +392,32 @@ var MobileFuton = (function () {
         });
         html += '</ul>';
       });
-      renderer.render('config_tpl', {config:html});
+      renderer.render('config_tpl', {config:html}, rtr);
     });
   });
 
 
-  router.get('#/tasks/', function () {
+  router.get('#/tasks/', function(rtr) {
     setTitle('Active Tasks');
     $.couch.activeTasks({error: unauth}).then(function(data) {
-      renderer.render('tasks_tpl', {tasks: data});
+      renderer.render('tasks_tpl', {tasks: data}, rtr);
     });
     interval = setInterval(updateActiveTasks, 5000);
   }).unload(clearRefresh);
 
 
-  router.get('#/account/', function () {
+  router.get('#/account/', function(rtr) {
     var user = $$("#user").user;
     user.roles = user.roles.toString();
     if (user.name) {
-      renderer.render('logged_in', user);
+      renderer.render('logged_in', user, rtr);
     } else {
-      renderer.render('logged_out');
+      renderer.render('logged_out', {}, rtr);
     }
   });
 
 
-  router.post('#create_doc', function (e, form) {
+  router.post('#create_doc', function (_, e, form) {
     var obj = parseJSON(form.value || "{}");
     if (typeof obj !== "object" || $.isArray(obj)) {
       obj = {};
@@ -431,12 +431,12 @@ var MobileFuton = (function () {
   });
 
 
-  router.post('#logout', function (e, form) {
+  router.post('#logout', function (_, e, form) {
     $.couch.logout().then(refreshSession);
   });
 
 
-  router.post('#login', function (e, form) {
+  router.post('#login', function (_, e, form) {
 
     var login = function() {
       $.couch.login(
@@ -456,7 +456,7 @@ var MobileFuton = (function () {
   });
 
 
-  router.post('#addkey', function (e, form) {
+  router.post('#addkey', function (_, e, form) {
     $('#addkeybtn').val('Saving ...');
     $.couch.db(form.db).openDoc(form.doc).then(function(json) {
       for(var tmp=json, keys=form.key.split(":"), i=0; i < keys.length; i++) {
@@ -476,7 +476,7 @@ var MobileFuton = (function () {
   });
 
 
-  router.post('#savekey', function (e, form) {
+  router.post('#savekey', function (_, e, form) {
     $('#savekey').val('Saving ...');
     $.couch.db(form.db).openDoc(form.doc).then(function(json) {
       for(var tmp = json, keys = form.key.split(":"), i = 0; i < keys.length-1; i++) {
@@ -491,7 +491,7 @@ var MobileFuton = (function () {
   });
 
 
-  router.post('#replication', function (e, form) {
+  router.post('#replication', function (_, e, form) {
 
     var obj = { source: form.custom_source || form.source
               , target: form.custom_target || form.target
@@ -509,7 +509,7 @@ var MobileFuton = (function () {
   });
 
 
-  router.post('#config', function (e, form) {
+  router.post('#config', function (_, e, form) {
 
     $('#saveconfig').val('Saving ...');
 
@@ -535,14 +535,14 @@ var MobileFuton = (function () {
   });
 
 
-  router.post('#delete_database', function (e, form) {
+  router.post('#delete_database', function (_, e, form) {
     $.couch.db(form.db).drop().then(function() {
       location.href = "#/db/";
     });
   });
 
 
-  router.post('#delete_key', function (e, form) {
+  router.post('#delete_key', function (_, e, form) {
     $.couch.db(form.db).openDoc(form.doc).then(function(json) {
       for(var tmp = json, keys = form.key.split(":"), i = 0; i < keys.length-1; i++) {
         tmp = tmp[keys[i]];
@@ -555,7 +555,7 @@ var MobileFuton = (function () {
   });
 
 
-  router.post('#delete_doc', function (e, form) {
+  router.post('#delete_doc', function (_, e, form) {
     $.couch.db(form.db).openDoc(form.doc).then(function(doc) {
       $.couch.db(form.db).removeDoc(doc).then(function() {
         location.href = form.back;

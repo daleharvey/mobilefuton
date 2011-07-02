@@ -36,6 +36,8 @@ var Renderer = (function() {
     opts = opts || {};
     data = data || {};
 
+    console.log(opts);
+
     var rendered = Mustache.to_html($("#" + tpl).html(), data),
     $pane = $("<div class='pane'><div class='content'>" + rendered + "</div></div>");
 
@@ -82,7 +84,7 @@ var Renderer = (function() {
     } else {
 
       if (current_tpl) {
-        currentOffset += true ? paneWidth : -paneWidth;
+        currentOffset += !(opts.router && opts.router.back) ? paneWidth : -paneWidth;
       }
 
       var tmp = lastPane;
