@@ -187,8 +187,8 @@ var MobileFuton = (function () {
 
       var rows = $.map(data.rows, function(obj) {
         obj.name = encodeURIComponent(obj.id);
-        obj.display = JSON.stringify(obj.key, null, ' ') + "<span class='jsonval'>" +
-          JSON.stringify(obj.value) + "</span>";
+        obj.display = JSON.stringify(obj.key, null, ' ') +
+          " <span class='jsonval'>" + JSON.stringify(obj.value) + "</span>";
         return obj;
       });
 
