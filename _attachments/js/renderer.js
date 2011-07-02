@@ -36,8 +36,6 @@ var Renderer = (function() {
     opts = opts || {};
     data = data || {};
 
-    console.log(opts);
-
     var rendered = Mustache.to_html($("#" + tpl).html(), data),
     $pane = $("<div class='pane'><div class='content'>" + rendered + "</div></div>");
 
@@ -45,7 +43,7 @@ var Renderer = (function() {
       callback($pane);
     }
 
-    if (opts.notransition) {
+    if (opts.notransition || (opts.router && opts.router.refresh)) {
 
       $pane.css({"left":currentOffset}).appendTo($("#content"));
       if (lastPane) {

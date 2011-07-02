@@ -65,12 +65,14 @@ var Router = (function() {
     }
   }
 
-  function urlChanged(maintainScroll) {
+  function refresh() {
+    urlChanged(null, {"router": {"refresh": true}});
+  }
+
+  function urlChanged(e, opts) {
+    opts = opts || {};
     history.push("#" + (document.location.href.split("#")[1] || ""));
-    trigger("GET", "#" + (document.location.href.split("#")[1] || ""));
-    if (maintainScroll !== true) {
-      //window.scrollTo(0,0);
-    }
+    trigger("GET", "#" + (document.location.href.split("#")[1] || ""), null, null, opts);
   }
 
   function forward(url) {
@@ -87,8 +89,8 @@ var Router = (function() {
     }
   }
 
-  function trigger(verb, url, ctx, data) {
-
+  function trigger(verb, url, ctx, data, opts) {
+    opts = opts || {};
     hashparams = [];
     $.each((url.split("?")[1] || "").split("&"), function(i, param) {
       var tmp = param.split("=");
@@ -106,11 +108,11 @@ var Router = (function() {
         lastPage.unload.apply(this, args);
       }
 
-      var opq = match.details.opts || {}
+      var opq = $.extend({}, opts, match.details.opts)
         , isBack = (history.length > 2 && url === history[history.length-3]);
 
       if (isBack) {
-        opq.router = {};
+        opq.router = opq.router || {};
         opq.router.back = true;
       }
       args.unshift(opq);
@@ -162,7 +164,7 @@ var Router = (function() {
   }
 
   return { previous : previous
-         , refresh : urlChanged
+         , refresh : refresh
          , forward : forward
          , back    : back
          , get     : get
