@@ -378,22 +378,27 @@ var MobileFuton = (function () {
 
     setTitle('Config');
 
-    var html = ''
-      , header = '<ul><li class="header">{{id}}</li>'
-      , item = '<li><label>{{name}}<br /><div class="inputwrap">' +
-      '<input type="text" name=\'{{id}}:{{{name}}}\' value=\'{{{value}}}\' />' +
-      '</div></label></li>'
+    $.couch.config({error:unauth}).then(function(data) {
+      var sections = [];
+      $.each(data, function(id) { sections.push(id); });
+      renderer.render('config_top_tpl', {config:sections}, rtr);
+    });
+
+  });
+
+
+  router.get('#/config/:section/', function(rtr, section) {
+
+    setTitle('Config');
 
     $.couch.config({error:unauth}).then(function(data) {
-      $.each(data, function(id) {
-        html += Mustache.to_html(header, {id:id});
-        $.each(data[id], function(opts) {
-          html += Mustache.to_html(item, {name:opts, id:id, value:data[id][opts]});
-        });
-        html += '</ul>';
+      var items = [];
+      $.each(data[section], function(id) {
+        items.push({key:id, value:data[section][id]});
       });
-      renderer.render('config_tpl', {config:html}, rtr);
+      renderer.render('config_section_tpl', {items:items, section:section}, rtr);
     });
+
   });
 
 
@@ -510,24 +515,19 @@ var MobileFuton = (function () {
 
 
   router.post('#config', function (_, e, form) {
-
     $('#saveconfig').val('Saving ...');
 
     function setConfig(obj) {
-      return $.couch.config({}, obj.section, obj.key, obj.value);
+      return $.couch.config({}, form.section, obj.key, obj.value);
     }
 
     $.couch.config().then(function(data) {
       var changes = [];
       $.each(form, function(name) {
-        var tmp = name.split(':');
-        if (data[tmp[0]][tmp[1]] != form[name]) {
-          changes.push({ section: tmp[0]
-                       , key: tmp[1]
-                       , value: form[name] });
+        if (name !== "section" && data[form.section][name] != form[name]) {
+          changes.push({key: name, value: form[name]});
         }
       });
-
       $.when.apply(this, $.map(changes, setConfig)).then(function() {
         $('#saveconfig').val('Save Config');
       });

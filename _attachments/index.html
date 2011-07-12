@@ -45,9 +45,27 @@
     </script>
 
 
-    <script type="text/html" id="config_tpl">
+    <script type="text/html" id="config_top_tpl">
+      <ul>
+        <li class="header">Sections</li>
+        {{#config}}
+        <li><a href="#/config/{{.}}/">{{.}}</a></li>
+        {{/config}}
+      </ul>
+    </script>
+
+
+    <script type="text/html" id="config_section_tpl">
       <form action="#config" id="config">
-        {{{config}}}
+        <input type="hidden" name="section" value="{{{section}}}" />
+        <ul>
+          <li class="header">{{section}}</li>
+          {{#items}}
+          <li><label>{{key}}<br /><div class="inputwrap">
+                <input type="text" name="{{{key}}}" value="{{{value}}}" />
+          </div></label></li>
+          {{/items}}
+        </ul>
         <div style="padding:10px;">
           <input type="submit" value="Save Config" id="saveconfig" />
         </div>
