@@ -93,7 +93,7 @@ var MobileFuton = (function () {
       var complete = function(xhr) {
         completed++;
         if (xhr.status === 200) {
-          couchapps.push({url:url, name:ddoc.ddoc.split('/')[1]});
+          couchapps.push({url:url, name:ddoc.database + "/" + ddoc.ddoc.split('/')[1]});
         }
         if (completed === max) {
           renderer.render('couchapps_tpl', {couchapps:couchapps}, rtr);
