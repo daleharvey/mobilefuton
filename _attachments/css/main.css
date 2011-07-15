@@ -353,10 +353,15 @@ li:last-child .delete {
 }
 
 .delete, .cancel {
-    position:absolute; right:0px; top:0px;
+    position:absolute;
+    right:0px;
+    top:0px;
+    border:0px;
+    border-left:1px solid black;
     height:100%;
-    border-left:1px solid #AAA;
-    background:#666;
+    background: -moz-linear-gradient(center top,
+                                     #666, #555) repeat scroll 0 0 transparent;
+    background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0,#666),color-stop(1,#555));
     padding:0px 10px;
     font-size: 14px;
     font-weight: bold;
@@ -364,8 +369,6 @@ li:last-child .delete {
     opacity: 1;
     text-shadow: 1px 1px 1px #000;
     color:white;
-
-
 }
 
 .repl {
