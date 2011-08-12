@@ -56,7 +56,7 @@
 
 
     <script type="text/html" id="config_section_tpl">
-      <form action="#config" id="config">
+     <form action="#config" id="config">
         <input type="hidden" name="section" value="{{{section}}}" />
         <ul>
           <li class="header">{{section}}</li>
@@ -270,9 +270,23 @@
       <ul id="db_list">
         <li class="header">Databases</li>
         {{#databases}}
-        <li><a href="#/db/{{url}}/">{{name}}<span class="arrow right">›</span></a></li>
+        <li><a href="#/db/{{url}}/">{{name}}
+            <span class="arrow right">›</span></a></li>
         {{/databases}}
       </ul>
+
+      <form action="#create_db" id="create_db_form">
+        <ul>
+          <li class="header">Create Database</li>
+          <li class="selectwrapper">
+            <input type="text"  name="name" placeholder="Database Name" required />
+          </li>
+        </ul>
+        <div style="padding:10px;">
+          <input type="submit" value="Create" />
+        </div>
+      </form>
+
     </script>
 
     <script type="text/html" id="unauthorized_tpl">

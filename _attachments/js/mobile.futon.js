@@ -422,6 +422,13 @@ var MobileFuton = (function () {
   });
 
 
+  router.post('#create_db', function (_, e, form) {
+    $.couch.db(form.name).create({}).then(function() {
+      location.href = "#/db/" + form.name + "/";
+    });
+  });
+
+
   router.post('#create_doc', function (_, e, form) {
     var obj = parseJSON(form.value || "{}");
     if (typeof obj !== "object" || $.isArray(obj)) {
