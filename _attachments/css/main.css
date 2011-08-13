@@ -141,7 +141,7 @@ header {
                                        color-stop(0%,#444),
                                        color-stop(100%,#222));
     border-bottom:1px solid #000;
-    padding:10px;
+    padding:10px 0px;
 }
 
 ul {
@@ -194,10 +194,10 @@ li:first-child a:hover {
 li:last-child a:hover {
     border-radius:0 0 0.6em 0.6em;
 }
-li a:hover {
-    background: -moz-linear-gradient(center top , #EDEDED, #DADADA) repeat scroll 0 0 #DADADA;
-    background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0,#EDEDED),color-stop(1,#DADADA));
-}
+/* li a:active { */
+/*     background: -moz-linear-gradient(center top , #EDEDED, #DADADA) repeat scroll 0 0 #DADADA; */
+/*     background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0,#EDEDED),color-stop(1,#DADADA)); */
+/* } */
 
 li a, li > span {
     display:block;

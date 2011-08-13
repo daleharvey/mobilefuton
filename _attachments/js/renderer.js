@@ -1,9 +1,9 @@
 var Renderer = (function() {
 
-  var paneWidth = 0,
-      currentOffset = 0,
-      current_tpl   = null,
-      lastPane  = null;
+  var paneWidth = 0;
+  var currentOffset = 0;
+  var current_tpl = null;
+  var lastPane = null;
 
   $(window).bind("resize", function () {
     paneWidth = $("body").width();
@@ -38,6 +38,8 @@ var Renderer = (function() {
 
     var rendered = Mustache.to_html($("#" + tpl).html(), data),
     $pane = $("<div class='pane'><div class='content'>" + rendered + "</div></div>");
+
+    makeLinksFast($pane);
 
     if (callback) {
       callback($pane);

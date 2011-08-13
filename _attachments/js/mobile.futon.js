@@ -15,6 +15,17 @@ $.ajaxSetup({
 });
 
 
+function makeLinksFast($dom) {
+  $("a", $dom).each(function() {
+    var link = this;
+    new google.ui.FastButton(link, function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      document.location = link.getAttribute('href');
+    });
+  });
+}
+
 // jquery.couch.js needs some callbacks nullified to prevent defaults
 var nil = function() {};
 
@@ -53,17 +64,17 @@ function $$(node) {
 
 var MobileFuton = (function () {
 
-  var mainDb = location.pathname.split("/")[1]
-    , interval = null
-    , router = Router()
-    , renderer = Renderer()
-    , docs = {}
-    , replications = localData.get('replications', [])
-    , clearRefresh = function() { clearInterval(interval); };
+  var mainDb = location.pathname.split("/")[1];
+  var interval = null;
+  var router = Router();
+  var renderer = Renderer();
+  var docs = {};
+  var replications = localData.get('replications', []);
+  var clearRefresh = function() { clearInterval(interval); };
 
 
   router.get(/^(#)?$/, function (rtr) {
-    setTitle('CouchDB');
+    setTitle('Mobile Futon');
     $.couch.info().then(function(info) {
       var tpldata =
           { ip: router.params.ip || location.hostname
@@ -766,6 +777,7 @@ var MobileFuton = (function () {
   };
 
   updateSession(function() {
+    makeLinksFast(document);
     router.init(window);
   });
 
