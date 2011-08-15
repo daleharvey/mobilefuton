@@ -19,9 +19,9 @@ function makeLinksFast($dom) {
   $("a", $dom).each(function() {
     var link = this;
     new google.ui.FastButton(link, function(e) {
+      document.location = link.getAttribute('href');
       e.stopPropagation();
       e.preventDefault();
-      document.location = link.getAttribute('href');
     });
   });
 }
@@ -99,7 +99,7 @@ var MobileFuton = (function () {
 
     function isCouchApp(ddoc, max) {
 
-      var url = '/' + ddoc.database + '/' + ddoc.ddoc + '/index.html';
+      var url = '/' + ddoc.database + '/' + ddoc.ddoc + '/index.hml';
 
       var complete = function(xhr) {
         completed++;

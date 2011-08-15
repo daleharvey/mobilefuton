@@ -130,8 +130,7 @@ input[type=submit], input[type=button], .button {
     -moz-transition: all 0.5s ease-in-out;
 }
 
-header {
-    z-index:4;
+#header {
     width:100%;
     display:block;
     background:#222;
@@ -232,7 +231,7 @@ li a, li > span {
 .plain_btn {
     position:absolute;
 }
-header h1 {
+#header h1 {
     color:white;
     text-align:center;
     margin:0px 70px;
@@ -273,17 +272,16 @@ option {
 }
 
 .home {
+    display:block;
     position:absolute;
     top:10px;
     left:15px;
-}
-.home.plain_btn {
-    padding: 0 5px;
-}
-
-.home img {
     height:24px;
-    height:24px;
+    width:24px;
+    background:url(../img/favicon.png) no-repeat;
+    background-size:100%;
+    overflow:hidden;
+    text-indent:-999px;
 }
 
 #document {
