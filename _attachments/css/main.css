@@ -216,7 +216,6 @@ li a, li > span {
     -webkit-border-radius:3px;
     border-radius:3px;
     color:#FFF;
-    text-shadow: 0 1px 1px #F6F6F6;
     letter-spacing:1.1px;
     cursor:pointer;
 }
@@ -241,6 +240,9 @@ li a, li > span {
     white-space:nowrap;
     text-overflow: ellipsis;
     overflow:hidden;
+    font-weight:normal;
+    letter-spacing: 1px;
+    font-family: Arial,sans-serif;
 }
 
 li.header {
@@ -429,7 +431,6 @@ li:last-child .delete {
     -moz-line-height:16px;
     background:#666;
     color: #FFF;
-    font-size: 20px;
     margin-right: 15px;
     border-radius:8px;
     text-align:center;
