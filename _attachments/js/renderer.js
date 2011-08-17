@@ -33,6 +33,8 @@ var Renderer = (function() {
 
   function render(tpl, data, opts, callback) {
 
+    window.scrollTo(0, 0);
+
     opts = opts || {};
     data = data || {};
 

@@ -71,19 +71,18 @@ var MobileFuton = (function () {
   var docs = {};
   var replications = localData.get('replications', []);
   var clearRefresh = function() { clearInterval(interval); };
+  var version;
 
-
-  router.get(/^(#)?$/, function (rtr) {
+  router.get(/^#(\/)?$/, function (rtr) {
     setTitle('Mobile Futon');
-    $.couch.info().then(function(info) {
-      var tpldata =
-          { ip: router.params.ip || location.hostname
-          , port: location.port || 80
-          , version: (info.version)
-          , adminparty: isAdminParty() }
-      renderer.render('home_tpl', tpldata, rtr);
-    });
-  }).opts({"foo":"bar"});
+    var tpldata ={
+      ip: router.params.ip || location.hostname,
+      port: location.port || 80,
+      version: version.version,
+      adminparty: isAdminParty()
+    };
+    renderer.render('home_tpl', tpldata, rtr);
+  });
 
 
   router.get('#/couchapps/', function(rtr) {
@@ -99,7 +98,7 @@ var MobileFuton = (function () {
 
     function isCouchApp(ddoc, max) {
 
-      var url = '/' + ddoc.database + '/' + ddoc.ddoc + '/index.hml';
+      var url = '/' + ddoc.database + '/' + ddoc.ddoc + '/index.html';
 
       var complete = function(xhr) {
         completed++;
@@ -134,10 +133,10 @@ var MobileFuton = (function () {
 
   router.get('#/db/:database/', function (rtr, database) {
 
-    var dbname = decodeURIComponent(database)
-      , views = []
-      , $db = $.couch.db(dbname)
-      , allDocs = $db.allDesignDocs({include_docs:true});
+    var dbname = decodeURIComponent(database);
+    var views = [];
+    var $db = $.couch.db(dbname);
+    var allDocs = $db.allDesignDocs({include_docs:true});
 
     setTitle(dbname);
 
@@ -151,11 +150,13 @@ var MobileFuton = (function () {
         });
       });
 
-      var data = { views: views
-                 , db: database
-                 , doc_count: info.doc_count
-                 , update_seq: info.update_seq
-                 , disk_size: Utils.formatSize(info.disk_size) };
+      var data = {
+        views: views,
+        db: database,
+        doc_count: info.doc_count,
+        update_seq: info.update_seq,
+        disk_size: Utils.formatSize(info.disk_size)
+      };
 
       renderer.render('database_tpl', data, rtr);
     });
@@ -778,7 +779,10 @@ var MobileFuton = (function () {
 
   updateSession(function() {
     makeLinksFast(document);
-    router.init(window);
+    $.couch.info().then(function(data) {
+      version = data;
+      router.init(window);
+    });
   });
 
 })();
