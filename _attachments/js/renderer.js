@@ -86,7 +86,8 @@ var Renderer = (function() {
     } else {
 
       if (current_tpl) {
-        currentOffset += !(opts.router && opts.router.back) ? paneWidth : -paneWidth;
+        var goBack = (opts.router && (opts.router.back || opts.router.home));
+        currentOffset += !goBack ? paneWidth : -paneWidth;
       }
 
       var tmp = lastPane;

@@ -90,31 +90,44 @@ var Router = (function() {
   }
 
   function trigger(verb, url, ctx, data, opts) {
+
     opts = opts || {};
     hashparams = [];
+
     $.each((url.split("?")[1] || "").split("&"), function(i, param) {
       var tmp = param.split("=");
       hashparams[tmp[0]] = tmp[1];
     });
 
     var match = matchPath(verb, url.split("?")[0]);
+
     if (match) {
+
       var args = match.match.slice(1);
+
       if (verb === "POST") {
         args.unshift(data);
         args.unshift(ctx);
       }
+
       if (lastPage && lastPage.unload && verb === "GET") {
         lastPage.unload.apply(this, args);
       }
 
-      var opq = $.extend({}, opts, match.details.opts)
-        , isBack = (history.length > 2 && url === history[history.length-3]);
+      var opq = $.extend({}, opts, match.details.opts);
+      var isBack = (history.length > 2 && url === history[history.length-3]);
 
       if (isBack) {
         opq.router = opq.router || {};
         opq.router.back = true;
+        history.length -= 2;
       }
+
+      if (match.match[0] === "#/") {
+        opq.router = opq.router || {};
+        opq.router.home = true;
+      }
+
       args.unshift(opq);
       match.details.load.apply(this, args);
       if (verb === "GET") {
