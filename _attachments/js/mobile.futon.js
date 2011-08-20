@@ -17,12 +17,14 @@ $.ajaxSetup({
 
 function makeLinksFast($dom) {
   $("a", $dom).each(function() {
-    var link = this;
-    new google.ui.FastButton(link, function(e) {
-      document.location = link.getAttribute('href');
-      e.stopPropagation();
-      e.preventDefault();
-    });
+    var link = $(this).attr('href');
+    if (link) {
+      new google.ui.FastButton(this, function(e) {
+        document.location = link;
+        e.stopPropagation();
+        e.preventDefault();
+      });
+    }
   });
 }
 
