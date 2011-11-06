@@ -9,4 +9,4 @@ Mobile Futon is a plain couchapp, so to get started just
     $ git clone git@github.com:daleharvey/mobilefuton.git
     $ cd mobilefuton
     $ couchapp init
-    $ couchapp push http://127.0.0.1:5984
+    $ couchapp push http://127.0.0.1:5984/mobilefuton
