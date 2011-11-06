@@ -180,6 +180,15 @@ var MobileFuton = (function () {
   });
 
 
+  router.get('#/db/:database/_compact/', function (rtr, db) {
+    var data = { action: "#compact_database"
+               , cancel: "#/db/" + db + "/"
+               , notice: "compact the database " + db
+               , action_btn: "Compact"
+               , form: [{key:"db", value:db}] };
+    renderer.render('confirm_tpl', data, rtr);
+  });
+
   router.get('#/db/:db/views/*view', function (rtr, db, view) {
 
     var dbname = decodeURIComponent(db)
@@ -562,6 +571,15 @@ var MobileFuton = (function () {
     });
   });
 
+  router.post('#compact_database', function (_, e, form) {
+    $.couch.db(form.db).compact({
+        fail : function(e){
+            console.log(e);
+        }
+    }).then(function() {
+      location.href = "#/db/";
+    });
+  });
 
   router.post('#delete_key', function (_, e, form) {
     $.couch.db(form.db).openDoc(form.doc).then(function(json) {
