@@ -426,6 +426,9 @@ li:last-child .delete {
     right: 0;
     top:15px;
 }
+.padded {
+    margin-right: 10px;
+}
 .arrow {
     display:block;
     width:14px;

@@ -105,7 +105,10 @@ var MobileFuton = (function () {
       var complete = function(xhr) {
         completed++;
         if (xhr.status === 200) {
-          couchapps.push({url:url, name:ddoc.database + "/" + ddoc.ddoc.split('/')[1]});
+          couchapps.push({
+            url:url,
+            name:ddoc.database + "/" + ddoc.ddoc.split('/')[1]
+          });
         }
         if (completed === max) {
           renderer.render('couchapps_tpl', {couchapps:couchapps}, rtr);
@@ -422,6 +425,22 @@ var MobileFuton = (function () {
       renderer.render('config_section_tpl', {items:items, section:section}, rtr);
     });
 
+  });
+
+
+  router.get('#/stats/', function(rtr) {
+    setTitle('Statistics');
+    $.couch.stats().then(function(data) {
+      var items = [];
+      $.each(data, function(id) {
+        var obj = {key:id, value:[]};
+        $.each(data[id], function(stat) {
+          obj.value.push({key:stat, value: data[id][stat]});
+        });
+        items.push(obj);
+      });
+      renderer.render('stats_tpl', {stats:items}, rtr);
+    });
   });
 
 

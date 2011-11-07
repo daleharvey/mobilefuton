@@ -951,6 +951,26 @@
     },
 
     /**
+     * Accessing the root of a CouchDB instance returns meta information about
+     * the instance. The response is a JSON structure containing information
+     * about the server, including a welcome message and the version of the
+     * server.
+     * @see <a href="http://techzone.couchbase.com/sites/default/files/uploads/
+     * all/documentation/couchbase-api-misc.html#couchbase-api-misc_root_get">
+     * docs for GET /</a>
+     * @param {ajaxSettings} options <a href="http://api.jquery.com/
+     * jQuery.ajax/#jQuery-ajax-settings">jQuery ajax settings</a>
+     */
+    stats: function(options) {
+      return ajax(
+        {url: this.urlPrefix + "/_stats"},
+        options,
+        "Server statistics could not be retrieved"
+      );
+    },
+
+
+    /**
      * Request, configure, or stop, a replication operation.
      * @see <a href="http://techzone.couchbase.com/sites/default/files/
      * uploads/all/documentation/couchbase-api-misc.html#couchbase-api-
