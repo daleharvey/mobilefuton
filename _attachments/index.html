@@ -212,8 +212,8 @@
         <input type="hidden"  name="db" value="{{db}}" />
         <ul>
           <li class="header">Create Document</li>
-          <li class="selectwrapper">
-            <input type="text"  name="id" placeholder="id" />
+          <li>
+            <input type="text"  name="id" placeholder="✎ id" />
           </li>
           <li><textarea placeholder="json" name="value"></textarea></li>
         </ul>
@@ -285,8 +285,8 @@
       <form action="#create_db" id="create_db_form">
         <ul>
           <li class="header">Create Database</li>
-          <li class="selectwrapper">
-            <input type="text"  name="name" placeholder="Database Name" required />
+          <li>
+            <input type="text"  name="name" placeholder="✎ Database Name" required />
           </li>
         </ul>
         <div style="padding:10px;">
@@ -311,7 +311,7 @@
       </ul>
 
       <form action="#replication">
-        <ul>
+        <ul class="replication">
           <li class="header">Create Replication</li>
           <li>
             <div class="selectwrapper">
@@ -322,7 +322,7 @@
                 {{/databases}}
               </select>
               <input type="text" name="custom_source" id="custom_source"
-                     placeholder="or enter a url" />
+                     placeholder="✎ or enter a url" />
             </div>
             <div class="selectwrapper">
               To:
@@ -332,7 +332,7 @@
                 {{/databases}}
               </select>
               <input type="text" name="custom_target" id="custom_target"
-                     placeholder="or enter a url"  />
+                     placeholder="✎ or enter a url"  />
             </div>
 
             <label for="continuous">
@@ -391,13 +391,13 @@
     <script type="text/html" id="logged_out">
       <form action="#login">
         <ul>
-          <li class="selectwrapper">
+          <li>
             <input type="text" id="username" name="username"
-                   placeholder="username" />
+                   placeholder="✎ username" />
           </li>
-          <li class="selectwrapper">
+          <li>
             <input type="password" id="password" name="password"
-                   placeholder="password" />
+                   placeholder="✎ password" />
           </li>
           <li>
             <label for="register">
