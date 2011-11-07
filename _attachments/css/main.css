@@ -456,6 +456,10 @@ li:last-child .delete {
     margin-top:20px;
 }
 
+.grey {
+    color: #999;
+}
+
 .replication input[type="text"] {
     border: 1px solid #BBB;
 }

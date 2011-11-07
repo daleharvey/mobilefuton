@@ -205,6 +205,7 @@
         <li><span>Document Count: {{doc_count}}</span></li>
         <li><span>Update Seq: {{update_seq}}</span></li>
         <li><span>Disk Size: {{disk_size}}</span></li>
+        <li><a href="#/db/{{db}}/changes">Changes<span class="arrow right">›</span></a></li>
       </ul>
 
       <ul>
@@ -241,6 +242,15 @@
           <input type="submit" value="Create" />
         </div>
       </form>
+    </script>
+
+
+    <script type="text/html" id="changes_tpl">
+      <ul>
+        {{#results}}
+        <li><span><span class="grey">{{seq}}. </span>{{id}}: {{changes_string}}</span></li>
+        {{/results}}
+      </ul>
     </script>
 
 

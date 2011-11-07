@@ -376,6 +376,14 @@ var MobileFuton = (function () {
     });
   });
 
+  router.get('#/db/:db/changes', function(rtr, db) {
+    $.couch.db(db).getDbProperty('_changes', {since: 0}).then(function(data) {
+      $.each(data.results, function(i) {
+        data.results[i].changes_string = JSON.stringify(data.results[i].changes);
+      });
+      renderer.render('changes_tpl', data, rtr);
+    });
+  });
 
   router.get('#/db/', function(rtr) {
     setTitle('Databases');
