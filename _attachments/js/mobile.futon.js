@@ -417,7 +417,7 @@ var MobileFuton = (function () {
     $.couch.config({error:unauth}).then(function(data) {
       var items = [];
       $.each(data[section], function(id) {
-        items.push({key:id, value:data[section][id]});
+        items.push({key:id, value:data[section][id].replace(/"/g, '&quot;')});
       });
       renderer.render('config_section_tpl', {items:items, section:section}, rtr);
     });
