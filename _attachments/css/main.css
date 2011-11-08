@@ -490,6 +490,7 @@ li:last-child .delete {
 #repl_doc .repl_status {
     position: absolute;
     left: -20px;
+    top: 0px;
 }
 
 #running .repl_status {
