@@ -410,16 +410,11 @@ var MobileFuton = (function () {
 
   router.get('#/replication/:id', function(rtr, id) {
     setTitle('Replication');
-    $.couch.db('_replicator').openDoc(id).then(function(data) {
-      var bleh = [];
-      $.each(data, function(key) {
-        bleh.push({key: key, value: data[key]});
-      });
-      data.keys = bleh;
-      data.running = data._replication_state === 'triggered',
-      renderer.render('replication_doc_tpl', data, rtr);
-    });
-  });
+    displayReplicationDoc(id, rtr);
+    interval = setInterval(function() {
+      displayReplicationDoc(id);
+    }, 5000);
+  }).unload(clearRefresh);
 
 
   router.get('#/config/', function(rtr) {
@@ -590,15 +585,12 @@ var MobileFuton = (function () {
 
   router.post('#toggle_replication', function(_, e, form) {
     $.couch.db('_replicator').openDoc(form.id).then(function(data) {
-      if (data._replication_state === 'triggered') {
-        data._replication_state = 'completed';
-        delete data.continuous;
-      } else {
+      if (data._replication_state !== 'triggered') {
         delete data._replication_state;
+        $.couch.db('_replicator').saveDoc(data).then(function(data) {
+          router.refresh();
+        });
       }
-      $.couch.db('_replicator').saveDoc(data).then(function(data) {
-        router.refresh();
-      });
     });
   });
 
@@ -673,42 +665,21 @@ var MobileFuton = (function () {
   };
 
 
-  function updateActiveTasks(transition) {
-    $.couch.activeTasks({error: unauth}).then(function(data) {
-      var $html = $(render('#tasks_tpl', {tasks: data}));
-      $('#tasks').replaceWith($html);
+  function displayReplicationDoc(id, rtr) {
+    $.couch.db('_replicator').openDoc(id).then(function(data) {
+      var bleh = [];
+      $.each(data, function(key) {
+        bleh.push({key: key, value: JSON.stringify(data[key])});
+      });
+      data.keys = bleh;
+      data.error = data._replication_state === 'error';
+      data.paused = data._replication_state === 'completed';
+      data.triggered = data._replication_state === 'triggered';
+      var opts = typeof rtr !== 'undefined' ? rtr : {notransition: true};
+      console.log(rtr, opts);
+      renderer.render('replication_doc_tpl', data, opts);
     });
-  };
-
-
-  function replicationExists(data) {
-    for(var i = 0; i < replications.length; i++) {
-      if (replications[i].source == data.source &&
-          replications[i].target === data.target) {
-        return true;
-      }
-    }
-    return false;
   }
-
-
-  function parseReplicationTask(task) {
-
-    var parts = (task.replace(/`/g, "").split(/:(.+)?/))
-      , where = (parts[1].split("->"))
-      , obj = { source: $.trim(where[0])
-              , target: $.trim(where[1]) };
-
-    if (parts[0].match('continuous')) {
-      obj.continuous = true;
-    }
-
-    if (parts[0].match('create_target')) {
-      obj.create_target = true;
-    }
-
-    return obj;
-  };
 
 
   function updateReplications() {

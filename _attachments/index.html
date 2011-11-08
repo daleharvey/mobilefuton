@@ -70,7 +70,14 @@
 
 
     <script type="text/html" id="replication_doc_tpl">
-      <h3 style="text-align:center">{{source}} => {{target}}</h3>
+      <div style="text-align:center; margin: 15px 0px;">
+      <h3 id="repl_doc" >
+        {{#error}}<span class="error repl_status">!</span>{{/error}}
+        {{#paused}}<span class="completed repl_status">✔</span>{{/paused}}
+        {{#triggered}}<span class="running repl_status">✔</span>{{/triggered}}
+        {{source}} -> {{target}}
+      </h3>
+      </div>
       <ul>
         <li class="header">Replication Document</li>
         {{#keys}}
@@ -78,10 +85,12 @@
         {{/keys}}
       </ul>
       <div style="padding:10px;">
+        {{#paused}}
         <form action="#toggle_replication">
           <input type="hidden" name="id" value="{{_id}}" />
-          <input type="submit" value="{{#running}}Pause{{/running}}{{^running}}Restart{{/running}}" />
+          <input type="submit" value="Rerun Replication" />
         </form><br />
+        {{/paused}}
         <form action="#delete_replication">
           <input type="hidden" name="rev" value="{{_rev}}" />
           <input type="hidden" name="id" value="{{_id}}" />
@@ -409,9 +418,9 @@
           data-continuous="{{continuous}}" data-create_target="{{create_target}}"
           class="repl">
         <a class="replication" href="#/replication/{{id}}">
-          {{#error}}<span class="error">!</span>{{/error}}
-          {{#completed}}<span class="completed">✔</span>{{/completed}}
-          {{#triggered}}<span class="running">✔</span>{{/triggered}}
+          {{#error}}<span class="error repl_status">!</span>{{/error}}
+          {{#completed}}<span class="completed repl_status">✔</span>{{/completed}}
+          {{#triggered}}<span class="running repl_status">✔</span>{{/triggered}}
           {{source}} -> {{target}}
           <span class="arrow right">›</span>
         </a>

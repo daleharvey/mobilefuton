@@ -468,8 +468,7 @@ li:last-child .delete {
     margin-top:10px;
 }
 
-.error {
-    background: none repeat scroll 0 0 red;
+.repl_status {
     border-radius: 10px 10px 10px 10px;
     color: #FFFFFF;
     display: block;
@@ -480,43 +479,35 @@ li:last-child .delete {
     text-align: center;
     text-shadow: none;
     width: 20px;
+}
+
+#repl_doc {
+    position: relative;
+    display:inline;
+    line-height: 30px;
+}
+
+#repl_doc .repl_status {
+    position: absolute;
+    left: -20px;
+}
+
+#running .repl_status {
     position:absolute;
     top: 12px;
     left: 15px;
+}
+
+.error {
+    background: none repeat scroll 0 0 red;
 }
 
 .completed {
     background: none repeat scroll 0 0 orange;
-    border-radius: 10px 10px 10px 10px;
-    color: #FFFFFF;
-    display: block;
-    height: 16px;
-    line-height: 16px;
-    padding-top:4px;
-    padding-left:1px;
-    text-align: center;
-    text-shadow: none;
-    width: 20px;
-    position:absolute;
-    top: 12px;
-    left: 15px;
 }
 
 .running {
     background: none repeat scroll 0 0 green;
-    border-radius: 10px 10px 10px 10px;
-    color: #FFFFFF;
-    display: block;
-    height: 16px;
-    line-height: 16px;
-    padding-top:4px;
-    padding-left:1px;
-    text-align: center;
-    text-shadow: none;
-    width: 20px;
-    position:absolute;
-    top: 12px;
-    left: 15px;
 }
 
 a.replication {
