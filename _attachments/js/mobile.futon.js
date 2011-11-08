@@ -71,7 +71,6 @@ var MobileFuton = (function () {
   var router = Router();
   var renderer = Renderer();
   var docs = {};
-  var replications = localData.get('replications', []);
   var clearRefresh = function() { clearInterval(interval); };
   var version;
 
@@ -398,14 +397,29 @@ var MobileFuton = (function () {
 
   router.get('#/replication/', function(rtr) {
     setTitle('Replication');
-    $.couch.allDbs({}).then(function(data) {
+    $.couch.allDbs({}).then(function(dbs) {
       renderer.render('replication_tpl', {
-        databases: data,
-        replications: replications
-      }, rtr, function(tpl) { setupReplicationEvents(tpl); updateReplications(); });
+        databases: dbs
+      }, rtr, function(tpl) {
+        updateReplications();
+      });
     });
     interval = setInterval(updateReplications, 5000);
   }).unload(clearRefresh);
+
+
+  router.get('#/replication/:id', function(rtr, id) {
+    setTitle('Replication');
+    $.couch.db('_replicator').openDoc(id).then(function(data) {
+      var bleh = [];
+      $.each(data, function(key) {
+        bleh.push({key: key, value: data[key]});
+      });
+      data.keys = bleh;
+      data.running = data._replication_state === 'triggered',
+      renderer.render('replication_doc_tpl', data, rtr);
+    });
+  });
 
 
   router.get('#/config/', function(rtr) {
@@ -555,19 +569,37 @@ var MobileFuton = (function () {
 
   router.post('#replication', function (_, e, form) {
 
-    var obj = { source: form.custom_source || form.source
-              , target: form.custom_target || form.target
-              , create_target: true
-              , continuous: (form.continuous === 'on') };
+    var obj = {
+      source: form.custom_source || form.source,
+      target: form.custom_target || form.target,
+      create_target: true,
+      continuous: (form.continuous === 'on'),
+      user_ctx: $$("#user").user
+    };
 
     $.couch.replicate(form.source, form.target, {error:nil}, obj)
            .then(updateReplications);
+  });
 
-    replications = $.grep(replications, function(repl) {
-      return !(repl.source === obj.source && repl.target === obj.target);
+  router.post('#delete_replication', function(_, e, form) {
+    $.couch.db('_replicator').removeDoc({_id: form.id, _rev:form.rev}).then(function() {
+      location.href = "#/replication/";
     });
-    replications.push(obj);
-    localData.set('replications', replications);
+  });
+
+
+  router.post('#toggle_replication', function(_, e, form) {
+    $.couch.db('_replicator').openDoc(form.id).then(function(data) {
+      if (data._replication_state === 'triggered') {
+        data._replication_state = 'completed';
+        delete data.continuous;
+      } else {
+        delete data._replication_state;
+      }
+      $.couch.db('_replicator').saveDoc(data).then(function(data) {
+        router.refresh();
+      });
+    });
   });
 
 
@@ -649,33 +681,6 @@ var MobileFuton = (function () {
   };
 
 
-  function setupReplicationEvents(tpl) {
-
-    $('.replication', tpl).bind('mousedown', function(e) {
-      var $obj = $(e.target).parent('li');
-      $('#custom_source', tpl).val($obj.attr("data-source"));
-      $('#custom_target', tpl).val($obj.attr("data-target"));
-      if ($obj.data('continuous')) {
-        $('#continuous', tpl).attr('checked', 'checked');
-      } else {
-        $('#continuous', tpl).removeAttr('checked');
-      }
-    });
-
-    $('.delete', tpl).bind('mousedown', function() {
-      var parent = ($(this).parents('li'))
-        , source = parent.data('source')
-        , target = parent.data('target');
-
-      replications = $.grep(replications, function(obj) {
-        return !(obj.source === source && obj.target === target);
-      });
-      localData.set('replications', replications);
-      router.refresh();
-    });
-  }
-
-
   function replicationExists(data) {
     for(var i = 0; i < replications.length; i++) {
       if (replications[i].source == data.source &&
@@ -715,36 +720,25 @@ var MobileFuton = (function () {
                            'read current tasks</li>');
     };
 
-    $.couch.activeTasks({error:err}).then(function(tasks) {
-
-      for(var replTasks = [], i = 0; i < tasks.length; i++) {
-        if (tasks[i].type === 'Replication') {
-          var tmp = parseReplicationTask(tasks[i].task);
-          tmp.cancellable = !(/\*/.test(tmp.source + tmp.target));
-          replTasks.push(tmp);
+    var opts = {error:err, include_docs: true};
+    $.couch.db('_replicator').allDocs(opts).then(function(tasks) {
+      var repls = [];
+      $.each(tasks.rows, function(i) {
+        var replication = tasks.rows[i];
+        if (/_design/.test(replication.id)) {
+          return;
         }
-      }
-
-      var $rows = $(render('#replication_items', {running: replTasks}));
-
-      $('.cancel', $rows).bind('mousedown', function() {
-
-        var parent = ($(this).parents('li'))
-          , obj = { source: (parent.data('source'))
-                  , target: (parent.data('target'))
-                  , cancel: true };
-
-        if (parent.data('continuous') === true) {
-          obj.continuous = true;
-        }
-        if (parent.data('create_target') === true) {
-          obj.create_target = true;
-        }
-
-        $.couch.replicate(obj.source, obj.target, {}, obj)
-               .then(updateReplications)
+        repls.push({
+          source: replication.doc.source,
+          target: replication.doc.target,
+          error: replication.doc._replication_state === 'error',
+          triggered: replication.doc._replication_state === 'triggered',
+          completed: replication.doc._replication_state === 'completed',
+          id: replication.id
+        });
       });
 
+      var $rows = $(render('#replication_items', {running: repls}));
       $('#running li:not(.header)').remove();
       $rows.insertAfter($('#running li.header'));
     });

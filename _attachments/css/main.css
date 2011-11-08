@@ -467,3 +467,58 @@ li:last-child .delete {
     border: 1px solid #BBB;
     margin-top:10px;
 }
+
+.error {
+    background: none repeat scroll 0 0 red;
+    border-radius: 10px 10px 10px 10px;
+    color: #FFFFFF;
+    display: block;
+    height: 16px;
+    line-height: 16px;
+    padding-top:4px;
+    padding-left:1px;
+    text-align: center;
+    text-shadow: none;
+    width: 20px;
+    position:absolute;
+    top: 12px;
+    left: 15px;
+}
+
+.completed {
+    background: none repeat scroll 0 0 orange;
+    border-radius: 10px 10px 10px 10px;
+    color: #FFFFFF;
+    display: block;
+    height: 16px;
+    line-height: 16px;
+    padding-top:4px;
+    padding-left:1px;
+    text-align: center;
+    text-shadow: none;
+    width: 20px;
+    position:absolute;
+    top: 12px;
+    left: 15px;
+}
+
+.running {
+    background: none repeat scroll 0 0 green;
+    border-radius: 10px 10px 10px 10px;
+    color: #FFFFFF;
+    display: block;
+    height: 16px;
+    line-height: 16px;
+    padding-top:4px;
+    padding-left:1px;
+    text-align: center;
+    text-shadow: none;
+    width: 20px;
+    position:absolute;
+    top: 12px;
+    left: 15px;
+}
+
+a.replication {
+    padding-left: 50px;
+}

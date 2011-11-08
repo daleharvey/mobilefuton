@@ -69,6 +69,28 @@
     </script>
 
 
+    <script type="text/html" id="replication_doc_tpl">
+      <h3 style="text-align:center">{{source}} => {{target}}</h3>
+      <ul>
+        <li class="header">Replication Document</li>
+        {{#keys}}
+        <li><span>{{key}}:<span class="right padded">{{value}}</span></span></li>
+        {{/keys}}
+      </ul>
+      <div style="padding:10px;">
+        <form action="#toggle_replication">
+          <input type="hidden" name="id" value="{{_id}}" />
+          <input type="submit" value="{{#running}}Pause{{/running}}{{^running}}Restart{{/running}}" />
+        </form><br />
+        <form action="#delete_replication">
+          <input type="hidden" name="rev" value="{{_rev}}" />
+          <input type="hidden" name="id" value="{{_id}}" />
+          <input type="submit" value="Delete" class="warning" />
+        </form>
+      </div>
+    </script>
+
+
     <script type="text/html" id="config_top_tpl">
       <ul>
         <li class="header">Sections</li>
@@ -202,9 +224,11 @@
     <script type="text/html" id="database_tpl">
       <ul>
         <li class="header">Database Info</li>
-        <li><span>Document Count: {{doc_count}}</span></li>
-        <li><span>Update Seq: {{update_seq}}</span></li>
-        <li><span>Disk Size: {{disk_size}}</span></li>
+        <li><span>Document Count:
+            <span class="right padded">{{doc_count}}</span></span></li>
+        <li><span>Update Seq:
+            <span class="right padded">{{update_seq}}</span></span></li>
+        <li><span>Disk Size:<span class="right padded">{{disk_size}}</span></span></li>
         <li><a href="#/db/{{db}}/changes">Changes<span class="arrow right">›</span></a></li>
       </ul>
 
@@ -338,7 +362,7 @@
     <script type="text/html" id="replication_tpl">
 
       <ul id="running">
-        <li class="header">Running Replications</li>
+        <li class="header">Replicator Database</li>
       </ul>
 
       <form action="#replication">
@@ -353,7 +377,7 @@
                 {{/databases}}
               </select>
               <input type="text" name="custom_source" id="custom_source"
-                     placeholder="✎ or enter a url" />
+                     placeholder="✎ or enter a url" value="" />
             </div>
             <div class="selectwrapper">
               To:
@@ -363,7 +387,7 @@
                 {{/databases}}
               </select>
               <input type="text" name="custom_target" id="custom_target"
-                     placeholder="✎ or enter a url"  />
+                     placeholder="✎ or enter a url"  value="" />
             </div>
 
             <label for="continuous">
@@ -376,19 +400,6 @@
         </div>
       </form>
 
-      <ul id="stored">
-        <li class="header">Previous Replications</li>
-        {{#replications}}
-        <li data-source="{{source}}" data-target="{{target}}"
-            data-continuous="{{continuous}}" class="repl">
-          <a class="replication">{{source}} =&gt; {{target}}</a>
-          <button class="delete">delete</button>
-        </li>
-        {{/replications}}
-        {{^replications}}
-        <li class="none">No Stored Replications</li>
-        {{/replications}}
-      </ul>
     </script>
 
 
@@ -397,10 +408,13 @@
       <li data-source="{{source}}" data-target="{{target}}"
           data-continuous="{{continuous}}" data-create_target="{{create_target}}"
           class="repl">
-        <a class="replication">{{{source}} -> {{target}}</a>
-        {{#cancellable}}
-        <button class="cancel">cancel</button>
-        {{/cancellable}}
+        <a class="replication" href="#/replication/{{id}}">
+          {{#error}}<span class="error">!</span>{{/error}}
+          {{#completed}}<span class="completed">✔</span>{{/completed}}
+          {{#triggered}}<span class="running">✔</span>{{/triggered}}
+          {{source}} -> {{target}}
+          <span class="arrow right">›</span>
+        </a>
       </li>
       {{/running}}
       {{^running}}
