@@ -271,19 +271,6 @@ option {
     padding-left:10px;
 }
 
-.home {
-    display:block;
-    position:absolute;
-    top:10px;
-    left:15px;
-    height:24px;
-    width:24px;
-    background:url(../img/favicon.png) no-repeat;
-    background-size:100%;
-    overflow:hidden;
-    text-indent:-999px;
-}
-
 #document {
     margin:10px;
     padding:5px;
@@ -384,7 +371,21 @@ li:last-child .delete {
     margin-bottom:10px;
 }
 
-#user { color:white; position:absolute; right:0px; top:0px; display:inline;
+#home {
+    outline: none;
+    height:16px;
+    width:16px;
+    background:url(../img/202.png) no-repeat center center;
+    top: 0px;
+    left: 0px;
+    text-indent: -999px;
+}
+
+#user {
+    color:white;
+    right:0px;
+    top:0px;
+    display:inline;
 }
 
 .warning { color:red; }
