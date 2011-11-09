@@ -415,7 +415,16 @@ li:last-child .delete {
     font-weight: normal !important;
 }
 
-.info { margin:20px; }
+.info {
+    font-size: 0.9em;
+    width: auto;
+    margin: 10px auto 0px auto;
+}
+
+.info_label {
+    text-align:right;
+    color:#999;
+}
 
 .light { color:#999; }
 

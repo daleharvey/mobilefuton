@@ -26,10 +26,10 @@
 
 
     <script type="text/html" id="home_tpl">
-      <div class="info">
-        <p><span class="light">Version:</span><br />{{version}}</p>
-        <p><span class="light">Current Host</span><br />http://{{ip}}:{{port}}/</p>
-      </div>
+      <table class="info">
+        <tr><td class="info_label">Version:</td><td>{{version}}</td></tr>
+        <tr><td class="info_label">Host:</td><td>{{ip}}:{{port}}/</td></tr>
+      </table>
       <ul>
         <li><a href="#/db/">Databases
             <span class="arrow right">›</span></a></li>
