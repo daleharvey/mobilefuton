@@ -981,13 +981,40 @@
      * jQuery.ajax/#jQuery-ajax-settings">jQuery ajax settings</a>
      * @param {Object} repOpts Additional replication options
      */
-    replicate: function(source, target, ajaxOptions, repOpts) {
+    replicator: function(source, target, ajaxOptions, repOpts) {
       repOpts = $.extend({source: source, target: target}, repOpts);
       if (repOpts.continuous && !repOpts.cancel) {
         ajaxOptions.successStatus = 202;
       }
       return ajax({
           type: "POST", url: this.urlPrefix + "/_replicator",
+          data: JSON.stringify(repOpts),
+          contentType: "application/json"
+        },
+        ajaxOptions,
+        "Replication failed"
+      );
+    },
+
+
+    /**
+     * Request, configure, or stop, a replication operation.
+     * @see <a href="http://techzone.couchbase.com/sites/default/files/
+     * uploads/all/documentation/couchbase-api-misc.html#couchbase-api-
+     * misc_replicate_post">docs for POST /_replicate</a>
+     * @param {String} source Path or url to source database
+     * @param {String} target Path or url to target database
+     * @param {ajaxSettings} ajaxOptions <a href="http://api.jquery.com/
+     * jQuery.ajax/#jQuery-ajax-settings">jQuery ajax settings</a>
+     * @param {Object} repOpts Additional replication options
+     */
+    replicate: function(source, target, ajaxOptions, repOpts) {
+      repOpts = $.extend({source: source, target: target}, repOpts);
+      if (repOpts.continuous && !repOpts.cancel) {
+        ajaxOptions.successStatus = 202;
+      }
+      return ajax({
+          type: "POST", url: this.urlPrefix + "/_replicate",
           data: JSON.stringify(repOpts),
           contentType: "application/json"
         },

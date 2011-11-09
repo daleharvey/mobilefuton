@@ -514,3 +514,11 @@ li:last-child .delete {
 a.replication {
     padding-left: 50px;
 }
+
+#replication_feedback pre {
+    margin: 10px;
+}
+
+.success {
+    color:green;
+}

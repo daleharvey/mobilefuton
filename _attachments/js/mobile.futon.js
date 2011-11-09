@@ -569,11 +569,23 @@ var MobileFuton = (function () {
       target: form.custom_target || form.target,
       create_target: true,
       continuous: (form.continuous === 'on'),
-      user_ctx: $$("#user").user
     };
 
-    $.couch.replicate(form.source, form.target, {error:nil}, obj)
-           .then(updateReplications);
+    if (form.persist === 'on') {
+      obj.user_ctx = $$("#user").user;
+      $.couch.replicator(null, null, {error:nil}, obj).then(updateReplications);
+    } else {
+      $.couch.replicate(null, null, {error:nil}, obj).fail(function(fail) {
+        var error = JSON.parse(fail.responseText);
+        $("#replication_feedback")
+          .html('<h3 class="warning">Replication Failed</h3>' +
+                '<pre>' + JSON.stringify(error, null, "  ") + '<pre>');
+      }).then(function(result) {
+        $("#replication_feedback")
+          .html('<h3 class="success">Replication Succeeded</h3>' +
+                '<pre>' + JSON.stringify(result, null, "  ") + '<pre>');
+      });
+    }
   });
 
   router.post('#delete_replication', function(_, e, form) {
@@ -676,7 +688,6 @@ var MobileFuton = (function () {
       data.paused = data._replication_state === 'completed';
       data.triggered = data._replication_state === 'triggered';
       var opts = typeof rtr !== 'undefined' ? rtr : {notransition: true};
-      console.log(rtr, opts);
       renderer.render('replication_doc_tpl', data, opts);
     });
   }
