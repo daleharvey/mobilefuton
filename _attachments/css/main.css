@@ -371,6 +371,31 @@ li:last-child .delete {
     margin-bottom:10px;
 }
 
+#logged_in_link, #logged_out_link {
+    display:block;
+    position:absolute;
+    top: 0px;
+    right: 0px;
+    outline: none;
+    height:16px;
+    width:16px;
+    text-indent: -9999px;
+}
+
+#logged_out_link {
+    background:url(../img/106.png) no-repeat center center;
+}
+#logged_in_link {
+    background:url(../img/261.png) no-repeat center center;
+}
+
+#user {
+    position:absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 9999;
+}
+
 #home {
     outline: none;
     height:16px;
@@ -378,14 +403,7 @@ li:last-child .delete {
     background:url(../img/202.png) no-repeat center center;
     top: 0px;
     left: 0px;
-    text-indent: -999px;
-}
-
-#user {
-    color:white;
-    right:0px;
-    top:0px;
-    display:inline;
+    text-indent: -9999px;
 }
 
 .warning { color:red; }
