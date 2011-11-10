@@ -739,7 +739,9 @@ var MobileFuton = (function () {
 
   function refreshSession() {
     updateSession(function() {
-      location.href = router.previous() || "#";
+      $(window).unbind('mousedown', hide_login);
+      $panel.hide();
+      router.refresh();
     });
   }
 
@@ -759,11 +761,37 @@ var MobileFuton = (function () {
     var user = $$("#user").user;
     if (user.name) {
       renderTo("#user", "#logged_in_btn", user);
+      renderTo("#user_panel", "#logged_in", user);
     } else {
       renderTo("#user", "#logged_out_btn");
+      renderTo("#user_panel", "#logged_out");
     }
   }
 
+  var $panel = $("#user_panel");
+  var hide_login = function(e) {
+    if (!$.contains($panel[0], e.target) && !$.contains($("#user")[0], e.target)) {
+      $panel.hide();
+      $(window).unbind('mousedown', hide_login);
+    }
+  };
+
+
+  (function() {
+
+    $("#user").bind('click', function() {
+      if ($("#user_panel").is(":visible")) {
+        $(window).unbind('mousedown', hide_login);
+        $panel.hide();
+      } else {
+        setTimeout(function() {
+          $(window).bind('mousedown', hide_login);
+        }, 0);
+        $panel.show();
+      }
+    });
+
+  })();
 
   function  isAdminParty() {
     return !$$("#user").user.name &&

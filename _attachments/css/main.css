@@ -121,7 +121,7 @@ input[type=submit], input[type=button], .button {
 
 .pane {
     position:absolute;
-    top:0px;
+    top:10px;
     width:100%;
     padding-bottom:10px;
 }
@@ -396,6 +396,11 @@ li:last-child .delete {
     z-index: 9999;
 }
 
+#user_panel {
+    display:none;
+    position:absolute;
+}
+
 #home {
     outline: none;
     height:16px;
@@ -549,4 +554,24 @@ a.replication {
 
 .success {
     color:green;
+}
+
+#user_panel {
+    width: 300px;
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: none repeat scroll 0 0 #222222;
+    border-color: -moz-use-text-color black black;
+    border-radius: 0 0 5px 5px;
+    border-right: 4px solid black;
+    border-style: none solid solid;
+    border-width: 0 4px 4px;
+    padding: 10px;
+    position: absolute;
+    right: 0;
+    top: 49px;
+    z-index: 999;
 }
