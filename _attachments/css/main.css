@@ -386,7 +386,11 @@ li:last-child .delete {
     background:url(../img/106.png) no-repeat center center;
 }
 #logged_in_link {
-    background:url(../img/261.png) no-repeat center center;
+    width: auto;
+    text-indent: 0px;
+    padding-left: 25px;
+    background:url(../img/261.png) no-repeat 5px center;
+    line-height:17px;
 }
 
 #user {
@@ -557,21 +561,62 @@ a.replication {
 }
 
 #user_panel {
-    width: 300px;
-    -moz-border-bottom-colors: none;
-    -moz-border-image: none;
-    -moz-border-left-colors: none;
-    -moz-border-right-colors: none;
-    -moz-border-top-colors: none;
     background: none repeat scroll 0 0 #222222;
-    border-color: -moz-use-text-color black black;
-    border-radius: 0 0 5px 5px;
-    border-right: 4px solid black;
-    border-style: none solid solid;
-    border-width: 0 4px 4px;
-    padding: 10px;
+    border: 0px;
+    border-radius: 0px 0px 0px 5px;
+    padding: 12px 10px 10px 10px;
     position: absolute;
     right: 0;
-    top: 49px;
+    top: 48px;
     z-index: 999;
+    color: white;
+    font-size: 14px;
+}
+
+#logout {
+    background: none repeat scroll 0 0 transparent;
+    border: 0 none;
+    color: white;
+    font-size: 14px;
+    height: auto;
+    text-align: left;
+    text-shadow: none;
+    font-weight: normal;
+}
+
+#logout:hover {
+    background: #444;
+}
+
+#user_panel td {
+    padding: 0px;
+}
+h4 { margin: 0px; }
+
+.open #user_panel {
+    display: block;
+}
+
+#register_wrap {
+    padding: 10px 0px;
+    display:block;
+    float:left;
+    margin-top: 10px;
+    color: #CCC;
+}
+
+#login {
+    width: auto;
+    height: auto;
+    font-size: 14px;
+    padding: 5px;
+    margin-top: 15px;
+    float:right;
+}
+
+#user_panel input[type=text], #user_panel input[type=password] {
+    background: #555;
+    color: #CCC;
+    text-shadow: none;
+    font-weight: normal;
 }

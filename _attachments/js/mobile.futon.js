@@ -677,6 +677,14 @@ var MobileFuton = (function () {
   };
 
 
+  function updateActiveTasks(transition) {
+    $.couch.activeTasks({error: unauth}).then(function(data) {
+      var $html = $(render('#tasks_tpl', {tasks: data}));
+      $('#tasks').replaceWith($html);
+    });
+  };
+
+
   function displayReplicationDoc(id, rtr) {
     $.couch.db('_replicator').openDoc(id).then(function(data) {
       var bleh = [];
@@ -740,7 +748,7 @@ var MobileFuton = (function () {
   function refreshSession() {
     updateSession(function() {
       $(window).unbind('mousedown', hide_login);
-      $panel.hide();
+      $wrapper.removeClass('open');
       router.refresh();
     });
   }
@@ -768,10 +776,14 @@ var MobileFuton = (function () {
     }
   }
 
+
+  var $wrapper = $("#header");
   var $panel = $("#user_panel");
   var hide_login = function(e) {
-    if (!$.contains($panel[0], e.target) && !$.contains($("#user")[0], e.target)) {
-      $panel.hide();
+    if (!$.contains($panel[0], e.target) &&
+        !$.contains($("#user")[0], e.target) &&
+        e.target.getAttribute('id') !== 'user_panel') {
+      $wrapper.removeClass('open');
       $(window).unbind('mousedown', hide_login);
     }
   };
@@ -782,12 +794,12 @@ var MobileFuton = (function () {
     $("#user").bind('click', function() {
       if ($("#user_panel").is(":visible")) {
         $(window).unbind('mousedown', hide_login);
-        $panel.hide();
+        $wrapper.removeClass('open');
       } else {
         setTimeout(function() {
           $(window).bind('mousedown', hide_login);
         }, 0);
-        $panel.show();
+        $wrapper.addClass('open');
       }
     });
 

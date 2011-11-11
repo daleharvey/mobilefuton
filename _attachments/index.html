@@ -136,8 +136,6 @@
           <table>
             <tr><td class="label">Pid:</td><td>{{pid}}</td></tr>
             <tr><td class="label">Type:</td><td>{{type}}</td></tr>
-            <tr><td class="label">Task:</td><td>{{task}}</td></tr>
-            <tr><td class="label">Status:</td><td>{{status}}</td></tr>
           </table>
         </li>
         {{/tasks}}
@@ -452,38 +450,19 @@
 
     <script type="text/html" id="logged_out">
       <form action="#login">
-        <ul>
-          <li>
-            <input type="text" id="username" name="username"
-                   placeholder="✎ username" />
-          </li>
-          <li>
-            <input type="password" id="password" name="password"
-                   placeholder="✎ password" />
-          </li>
-          <li>
-            <label for="register">
-              <input type="checkbox" id="register" name="register" /> Register
-            </label>
-          </li>
-        </ul>
-        <div class="selectwrapper">
-          <input type="submit" value="Login" />
-        </div>
+        <input type="text" id="username" name="username" placeholder="✎ username" /><br />
+        <input type="password" id="password" name="password" placeholder="✎ password" />
+        <label for="register" id="register_wrap">
+          <input type="checkbox" id="register" name="register" /> Register
+        </label>
+        <input type="submit" value="Login" id="login" />
       </form>
     </script>
 
 
     <script type="text/html" id="logged_in">
       <form action="#logout">
-        <ul>
-          <li class="header">User Information</li>
-          <li><div class="selectwrapper">name: {{name}}</div></li>
-          <li><div class="selectwrapper">roles: {{roles}}</div></li>
-        </ul>
-        <div class="selectwrapper">
-          <input type="submit" value="logout" />
-        </div>
+        <input type="submit" value="Sign Out" id="logout" />
       </form>
     </script>
 
