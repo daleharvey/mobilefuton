@@ -4,12 +4,17 @@ var Renderer = (function() {
   var currentOffset = 0;
   var current_tpl = null;
   var lastPane = null;
+  var block_transition = false;
 
   $(window).bind("resize", function () {
     paneWidth = $("body").width();
   });
   $(window).resize();
 
+
+  function blockTransition() {
+    block_transition = true;
+  }
 
   function transformY(dom, x) {
     if (Modernizr.csstransforms3d) {
@@ -43,6 +48,11 @@ var Renderer = (function() {
 
     if (callback) {
       callback($pane);
+    }
+
+    if (block_transition) {
+      opts.notransition = true;
+      block_transition = false;
     }
 
     if (opts.notransition || (opts.router && opts.router.refresh)) {
@@ -106,6 +116,7 @@ var Renderer = (function() {
   }
 
   return {
-    render: render
+    render: render,
+    blockTransition: blockTransition
   };
 });

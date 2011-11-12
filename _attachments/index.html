@@ -439,7 +439,7 @@
 
 
     <script type="text/html" id="logged_out_btn">
-      <a class="plain_btn" id="logged_out_link">login</a>
+      <a class="plain_btn" href="#/login/" id="logged_out_link">login</a>
     </script>
 
 
@@ -449,14 +449,19 @@
 
 
     <script type="text/html" id="logged_out">
-      <form action="#login">
-        <input type="text" id="username" name="username" placeholder="✎ username" /><br />
-        <input type="password" id="password" name="password" placeholder="✎ password" />
-        <label for="register" id="register_wrap">
-          <input type="checkbox" id="register" name="register" /> Register
-        </label>
-        <input type="submit" value="Login" id="login" />
-      </form>
+      <div class="dialog">
+        <div class="inner_dialog">
+        <form action="#login">
+          <input type="text" id="username" name="username" placeholder="✎ username" /><br />
+          <input type="password" id="password" name="password" placeholder="✎ password" />
+          <label for="register" id="register_wrap">
+            <input type="checkbox" id="register" name="register" /> Register
+          </label>
+          <input type="button" value="Cancel" id="cancel" class="close" />
+          <input type="submit" value="Login" id="login" />
+        </form>
+      </div>
+      </div>
     </script>
 
 

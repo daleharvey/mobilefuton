@@ -73,6 +73,16 @@ var MobileFuton = (function () {
   var docs = {};
   var clearRefresh = function() { clearInterval(interval); };
   var version;
+  var dialog;
+
+  router.pre(function() {
+    if (dialog) {
+      renderer.blockTransition();
+      dialog.remove();
+      dialog = null;
+    }
+    return true;
+  });
 
   router.get(/^#(\/)?$/, function (rtr) {
     setTitle('Mobile Futon');
@@ -83,6 +93,17 @@ var MobileFuton = (function () {
       adminparty: isAdminParty()
     };
     renderer.render('home_tpl', tpldata, rtr);
+  });
+
+  router.get('#/login/', function (rtr) {
+    dialog = $(render($("#logged_out"), {}));
+    dialog.find('.close').bind('click', function() {
+      dialog.remove();
+      if (!router.previous()) {
+        document.location.hash = '#/';
+      }
+    });
+    $("body").append(dialog);
   });
 
 

@@ -600,18 +600,21 @@ h4 { margin: 0px; }
 #register_wrap {
     padding: 10px 0px;
     display:block;
-    float:left;
     margin-top: 10px;
     color: #CCC;
 }
 
-#login {
+#login, #cancel {
     width: auto;
     height: auto;
     font-size: 14px;
     padding: 5px;
-    margin-top: 15px;
+    margin-top: 10px;
     float:right;
+}
+
+#cancel {
+    float:none;
 }
 
 #user_panel input[type=text], #user_panel input[type=password] {
@@ -619,4 +622,33 @@ h4 { margin: 0px; }
     color: #CCC;
     text-shadow: none;
     font-weight: normal;
+}
+
+.dialog {
+    position: absolute;
+    top:0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.inner_dialog {
+    margin: 20px auto;
+    background: black;
+    border-radius: 5px;
+    border: 1px solid #666;
+    width: 200px;
+    margin: 20px auto;
+    padding: 10px;
+    overflow:auto;
+}
+
+body {
+    -webkit-perspective: none;
+    -webkit-transform-style: flat;
+}
+body > * {
+    -webkit-backface-visibility: visible;
+    -webkit-transform: none;
 }

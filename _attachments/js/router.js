@@ -4,6 +4,7 @@ var Router = (function() {
     , PATH_MATCHER = (/:([\w\d]+)/g)
     , WILD_MATCHER = (/\*([\w\d]+)/g)
     , WILD_REPLACER = "(.*?)"
+    , preRouterFun  = null
     , lastPage
     , history = []
     , hashparams = {}
@@ -29,6 +30,10 @@ var Router = (function() {
       document.location.href = "#";
     }
   }
+
+  function preRouter(fun) {
+    preRouterFun = fun;
+  };
 
   function get(path, cb) {
     var obj = {path:path, load:cb};
@@ -90,6 +95,12 @@ var Router = (function() {
   }
 
   function trigger(verb, url, ctx, data, opts) {
+
+    if (preRouterFun) {
+      if (!preRouterFun(verb, url, ctx)) {
+        return;
+      }
+    }
 
     opts = opts || {};
     hashparams = [];
@@ -176,15 +187,18 @@ var Router = (function() {
     return hashparams[key];
   }
 
-  return { previous : previous
-         , refresh : refresh
-         , forward : forward
-         , back    : back
-         , get     : get
-         , post    : post
-         , init    : init
-         , matchesCurrent : matchesCurrent
-         , hashparam : hashparam
-         , params : params };
+  return {
+    previous : previous,
+    refresh : refresh,
+    forward : forward,
+    back    : back,
+    get     : get,
+    post    : post,
+    init    : init,
+    matchesCurrent : matchesCurrent,
+    hashparam : hashparam,
+    params : params,
+    pre     : preRouter
+  };
 
 });
