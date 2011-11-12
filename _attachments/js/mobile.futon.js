@@ -96,12 +96,16 @@ var MobileFuton = (function () {
   });
 
   router.get('#/login/', function (rtr) {
+    var user = $$("#user").user;
+    if (user.name) {
+      document.location.hash = '#/';
+      return;
+    }
+
     dialog = $(render($("#logged_out"), {}));
     dialog.find('.close').bind('click', function() {
       dialog.remove();
-      if (!router.previous()) {
-        document.location.hash = '#/';
-      }
+      document.location.hash = router.previous(0) || '#/';
     });
     $("body").append(dialog);
   });
@@ -531,11 +535,16 @@ var MobileFuton = (function () {
   router.post('#login', function (_, e, form) {
 
     var login = function() {
-      $.couch.login(
-        { name: form.username
-        , password: form.password
-        , success: refreshSession }
-      );
+      $.couch.login({
+        name: form.username,
+        password: form.password,
+        success: function() {
+          updateSession(function() {
+            if (dialog) { dialog.remove(); }
+            document.location.hash = router.previous(0) || '#/';
+          });
+        }
+      });
     };
 
     if (form.register && isAdminParty()) {
@@ -793,7 +802,6 @@ var MobileFuton = (function () {
       renderTo("#user_panel", "#logged_in", user);
     } else {
       renderTo("#user", "#logged_out_btn");
-      renderTo("#user_panel", "#logged_out");
     }
   }
 
@@ -813,6 +821,9 @@ var MobileFuton = (function () {
   (function() {
 
     $("#user").bind('click', function() {
+      if (!$$("#user").user.name) {
+        return;
+      }
       if ($("#user_panel").is(":visible")) {
         $(window).unbind('mousedown', hide_login);
         $wrapper.removeClass('open');
