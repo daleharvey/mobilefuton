@@ -76,12 +76,14 @@ var MobileFuton = (function () {
   var dialog;
 
   router.pre(function() {
+
     if (dialog) {
       renderer.blockTransition();
       dialog.remove();
       dialog = null;
     }
     return true;
+
   });
 
   router.get(/^#(\/)?$/, function (rtr) {
