@@ -39,8 +39,6 @@
             <span class="arrow right">›</span></a></li>
         <li><a href="#/couchapps/">CouchApps
             <span class="arrow right">›</span></a></li>
-        <li><a href="#/stats/">Statistics
-            <span class="arrow right">›</span></a></li>
         <li><a href="#/config/">Config
             <span class="arrow right">›</span></a></li>
       </ul>
@@ -48,24 +46,6 @@
       {{#adminparty}}
       <p class="adminparty">You are currently in Admin Party! </p>
       {{/adminparty}}
-    </script>
-
-
-    <script type="text/html" id="stats_tpl">
-      {{#stats}}
-      <ul>
-        <li class="header">{{key}}</li>
-        {{#value}}
-        <li>
-          <span>{{key}}:
-            <span class="right padded">
-              {{value.current}}{{^value.current}}0{{/value.current}}
-            </span>
-          </span>
-        </li>
-        {{/value}}
-      </ul>
-      {{/stats}}
     </script>
 
 

@@ -476,22 +476,6 @@ var MobileFuton = (function () {
   });
 
 
-  router.get('#/stats/', function(rtr) {
-    setTitle('Statistics');
-    $.couch.stats().then(function(data) {
-      var items = [];
-      $.each(data, function(id) {
-        var obj = {key:id, value:[]};
-        $.each(data[id], function(stat) {
-          obj.value.push({key:stat, value: data[id][stat]});
-        });
-        items.push(obj);
-      });
-      renderer.render('stats_tpl', {stats:items}, rtr);
-    });
-  });
-
-
   router.get('#/tasks/', function(rtr) {
     setTitle('Active Tasks');
     $.couch.activeTasks({error: unauth}).then(function(data) {
