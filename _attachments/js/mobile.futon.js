@@ -74,8 +74,12 @@ var MobileFuton = (function () {
   var clearRefresh = function() { clearInterval(interval); };
   var version;
   var dialog;
+  var $content = $('#wrapper');
 
-  router.pre(function() {
+  router.pre(function(_, url) {
+
+    var css = url.slice(1).split('/').join(' ');
+    $content.attr('class', css === ' ' ? 'home' : css);
 
     if (dialog) {
       renderer.blockTransition();

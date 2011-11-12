@@ -419,6 +419,12 @@ li:last-child .delete {
     text-indent: -9999px;
 }
 
+.home #home {
+    cursor: auto;
+    opacity: 0.5;
+}
+
+
 .warning { color:red; }
 
 .unavailable { text-decoration: line-through; color:#999; }
