@@ -1,5 +1,6 @@
 html, body {
     height: 100%;
+    background: #FFF;
 }
 
 body {
@@ -388,13 +389,17 @@ li:last-child .delete {
 
 #logged_out_link {
     background:url(../img/106.png) no-repeat center center;
+    background-size: 100%;
+    background-origin:content-box;
 }
 #logged_in_link {
     width: auto;
+    padding-left:25px;
     text-indent: 0px;
-    padding-left: 25px;
-    background:url(../img/261.png) no-repeat 5px center;
+    background:url(../img/261.png) no-repeat -20px center;
     line-height:17px;
+    background-size: 16px;
+    background-origin:content-box;
 }
 
 #user {
@@ -414,6 +419,8 @@ li:last-child .delete {
     height:16px;
     width:16px;
     background:url(../img/202.png) no-repeat center center;
+    background-size: 100%;
+    background-origin:content-box;
     top: 0px;
     left: 0px;
     text-indent: -9999px;
